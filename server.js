@@ -1,7 +1,7 @@
 var fs = require('fs'),
     app = require('express')(),
     https = require('https').Server(app),
-    io = require('socket.io')(http);
+    io = require('socket.io')(https);
 
 https.createServer({
     key: fs.readFileSync('key.pem'),
