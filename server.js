@@ -1,6 +1,12 @@
-var app = require('express')(),
-    http = require('https').Server(app),
+var fs = require('fs'),
+    app = require('express')(),
+    https = require('https').Server(app),
     io = require('socket.io')(http);
+
+https.createServer({
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+}, app);
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/client/index.html');
@@ -18,6 +24,6 @@ io.on('connection', function (socket) {
     });
 });
 
-http.listen(3000, function () {
+https.listen(3000, function () {
     console.log('listening on *:3000');
 });
