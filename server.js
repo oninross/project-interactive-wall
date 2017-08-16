@@ -1,6 +1,7 @@
-var app = require('express')(),
-    http = require('http').Server(app),
-    io = require('socket.io')(http);
+var fs = require('fs'),
+    app = require('express')(),
+    https = require('https').Server(app),
+    io = require('socket.io')(https);
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/client/index.html');
@@ -18,6 +19,6 @@ io.on('connection', function (socket) {
     });
 });
 
-http.listen(443, function () {
+https.listen(443, function () {
     console.log('listening on *:443');
 });
