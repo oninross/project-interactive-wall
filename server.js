@@ -1,5 +1,5 @@
 var app = require('express')(),
-    http = require('http').Server(app),
+    http = require('https').Server(app),
     io = require('socket.io')(http);
 
 app.get('/', function (req, res) {
