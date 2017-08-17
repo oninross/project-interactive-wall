@@ -11,15 +11,15 @@ var config = {
 firebase.initializeApp(config);
 
 // Get a reference to the database service
-var database = firebase.database();
-
-var fbDB = firebase.database().ref(),
+var database = firebase.database(),
+    fbDB = firebase.database().ref(),
     storage = firebase.storage(),
     storageRef = storage.ref(),
     imgRef;
 
 // First we sign in the user anonymously
 firebase.auth().signInAnonymously().then(function () {
+    // first load
     fbDB.once('value').then(function (snapshot) {
         var imagesObj = snapshot.val();
 
@@ -30,7 +30,6 @@ firebase.auth().signInAnonymously().then(function () {
             imgRef.getDownloadURL().then(function (url) {
                 // Once we have the download URL, we set it to our img element
                 // document.querySelector('img').src = url;
-                console.log(url)
                 $('.photowall').append($('<img src="' + url + '"/>'));
             }).catch(function (error) {
                 // If anything goes wrong while getting the download URL, log the error
@@ -40,15 +39,18 @@ firebase.auth().signInAnonymously().then(function () {
     });
 });
 
-// Write to database
-// function writeUserData(userId, name, email, imageUrl) {
-//     firebase.database().ref('users/' + userId).set({
-//         username: name,
-//         email: email,
-//         profile_picture: imageUrl
-//     });
-// }
 
+
+// Device Camera
+if ($('.camera').length) {
+    Webcam.set({
+        width: 320,
+        height: 240,
+        image_format: 'jpeg',
+        jpeg_quality: 90
+    });
+    Webcam.attach('.camera');
+}
 
 
 
