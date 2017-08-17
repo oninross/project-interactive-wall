@@ -41,3 +41,13 @@ form button {
 .photowall:after {
     clear: both;
 }
+
+.camera {}
+
+.clicker {
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    text-align: center;
+    width: 100%;
+}
