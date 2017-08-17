@@ -42,12 +42,23 @@ form button {
     clear: both;
 }
 
-.camera {}
+.camera {
+    margin: auto;
+}
 
 .clicker {
     bottom: 0;
     left: 0;
     position: fixed;
     text-align: center;
+    width: 100%;
+}
+
+#photo {
+    border: 1px solid red;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
     width: 100%;
 }

@@ -44,10 +44,14 @@ firebase.auth().signInAnonymously().then(function () {
 // Device Camera
 if ($('.camera').length) {
     Webcam.set({
-        width: '100%',
-        height: '100%',
+        width: $(window).width(),
+        height: $(window).height(),
         image_format: 'jpeg',
-        jpeg_quality: 100
+        jpeg_quality: 90,
+        constraints: {
+            width: { exact: 500 }
+        },
+        flip_horiz: true
     });
 
     Webcam.attach('.camera');
@@ -59,9 +63,8 @@ function take_snapshot() {
 
     // take snapshot and get image data
     Webcam.snap(function (data_uri) {
-        // display results in page
-        $('.photo').text(data_uri);
-        // Webcam.reset();
+        document.getElementById('photo').innerHTML = '<img src="' + data_uri + '"/>';
+        Webcam.reset();
     });
 }
 
