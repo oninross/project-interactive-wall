@@ -18,7 +18,8 @@ var fbDB = firebase.database(),
     d,
     imgRef,
     newPostRef,
-    file;
+    file,
+    blob;
 
 // First we sign in the user anonymously
 fbDB.ref('/image').on("child_added", function (snapshot) {
@@ -30,7 +31,7 @@ fbDB.ref('/image').on("child_added", function (snapshot) {
 
 
 // Device Camera
-if ($('#camera-stream').length) {
+if ($('.app').length) {
     var video = document.querySelector('#camera-stream'),
         image = document.querySelector('#snap'),
         start_camera = document.querySelector('#start-camera'),
@@ -38,85 +39,41 @@ if ($('#camera-stream').length) {
         take_photo_btn = document.querySelector('#take-photo'),
         delete_photo_btn = document.querySelector('#delete-photo'),
         upload_photo_btn = document.querySelector('#upload-photo'),
+        ios_photo_btn = document.querySelector('#ios-photo'),
         error_message = document.querySelector('#error-message');
 
-
-    // The getUserMedia interface is used for handling camera input.
-    // Some browsers need a prefix so here we're covering all the options
-    navigator.getMedia = (navigator.getUserMedia ||
-        navigator.webkitGetUserMedia ||
-        navigator.mozGetUserMedia ||
-        navigator.msGetUserMedia);
-
-
-    if (!navigator.getMedia) {
-        displayErrorMessage("Your browser doesn't have support for the navigator.getUserMedia interface.");
-    } else {
-
-        // Request the camera.
-        navigator.getMedia(
-            {
-                video: true
-            },
-            // Success Callback
-            function (stream) {
-
-                // Create an object URL for the video stream and
-                // set it as src of our HTLM video element.
-                video.src = window.URL.createObjectURL(stream);
-
-                // Play the video element to start the stream.
-                video.play();
-                video.onplay = function () {
-                    showVideo();
-                };
-
-            },
-            // Error Callback
-            function (err) {
-                displayErrorMessage("There was an error with accessing the camera stream: " + err.name, err);
-            }
-        );
-
-    }
-
-
-
-    // Mobile browsers cannot play video without user input,
-    // so here we're using a button to start it manually.
-    start_camera.addEventListener("click", function (e) {
-
-        e.preventDefault();
-
-        // Start video playback manually.
-        video.play();
-        showVideo();
-
-    });
-
+    controls.classList.add("visible");
 
     take_photo_btn.addEventListener("click", function (e) {
 
         e.preventDefault();
 
-        var snap = takeSnapshot();
+        ios_photo_btn.click();
+    })
 
+    ios_photo_btn.addEventListener("change", function (e) {
         // Show image.
-        image.setAttribute('src', snap);
-        image.classList.add("visible");
+        var tgt = e.target || window.event.srcElement,
+            files = tgt.files;
+
+        // FileReader support
+        if (FileReader && files && files.length) {
+            var fr = new FileReader();
+            fr.onload = function () {
+                image.src = fr.result;
+                image.classList.add("visible");
+            }
+
+            fr.readAsDataURL(files[0]);
+        } else {
+            // fallback -- perhaps submit the input to an iframe and temporarily store
+            // them on the server until the user's session ends.
+        }
 
         // Enable delete and save buttons
         delete_photo_btn.classList.remove("disabled");
         upload_photo_btn.classList.remove("disabled");
-
-        // Set the href attribute of the download button to the snap url.
-        upload_photo_btn.href = snap;
-
-        // Pause video playback of stream.
-        video.pause();
-
     });
-
 
     delete_photo_btn.addEventListener("click", function (e) {
 
@@ -141,61 +98,38 @@ if ($('#camera-stream').length) {
         newPostRef = fbDBref.child('image');
         d = new Date();
 
-        var canvas = document.getElementById("canvas");
-        canvas.toBlob(function (blob) {
-            var name = "/" + d.getTime() + ".png",
-                f = storageRef.child(name),
-                task = f.put(blob);
+        blob = dataURLtoBlob(image.src);
 
-            task.on('state_changed', function (snapshot) {
-            }, function (error) {
-                alert("Unable to save image.");
-                alert(error);
-            }, function () {
-                var url = task.snapshot.downloadURL;
-                console.log("Saved to " + url);
+        alert(blob)
 
-                newPostRef.push({
-                    "src": url
-                }).then(function () {
-                    alert('upload successful')
-                });
+        var name = "/" + d.getTime() + ".jpg",
+            f = storageRef.child(name),
+            task = f.put(blob);
+
+        task.on('state_changed', function (snapshot) {
+        }, function (error) {
+            alert("Unable to save image.");
+            alert(JSON.stringify(error));
+        }, function () {
+            var url = task.snapshot.downloadURL;
+            console.log("Saved to " + url);
+
+            newPostRef.push({
+                "src": url
+            }).then(function () {
+                alert('upload successful')
             });
         });
     });
 
-
-    function showVideo() {
-        // Display the video stream and the controls.
-
-        hideUI();
-        video.classList.add("visible");
-        controls.classList.add("visible");
-    }
-
-
-    function takeSnapshot() {
-        // Here we're using a trick that involves a hidden canvas element.
-
-        var hidden_canvas = document.querySelector('canvas'),
-            context = hidden_canvas.getContext('2d'),
-            width = video.videoWidth,
-            height = video.videoHeight;
-
-        if (width && height) {
-
-            // Setup a canvas with the same dimensions as the video.
-            hidden_canvas.width = width;
-            hidden_canvas.height = height;
-
-            // Make a copy of the current frame in the video on the canvas.
-            context.drawImage(video, 0, 0, width, height);
-
-            // Turn the canvas image into a dataURL that can be used as a src for our photo.
-            return hidden_canvas.toDataURL('image/png');
+    function dataURLtoBlob(dataurl) {
+        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
         }
+        return new Blob([u8arr], { type: mime });
     }
-
 
     function displayErrorMessage(error_msg, error) {
         error = error || "";
@@ -214,8 +148,8 @@ if ($('#camera-stream').length) {
         // Helper function for clearing the app UI.
 
         controls.classList.remove("visible");
-        start_camera.classList.remove("visible");
-        video.classList.remove("visible");
+        // start_camera.classList.remove("visible");
+        // video.classList.remove("visible");
         snap.classList.remove("visible");
         error_message.classList.remove("visible");
     }
