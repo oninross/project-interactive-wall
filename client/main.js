@@ -11,18 +11,20 @@ var config = {
 firebase.initializeApp(config);
 
 // Get a reference to the database service
-var database = firebase.database(),
-    fbDBref = database.ref(),
+var fbDB = firebase.database(),
+    fbDBref = fbDB.ref(),
     storage = firebase.storage(),
     storageRef = storage.ref(),
+    d,
     imgRef,
-    newPostRef;
+    newPostRef,
+    file;
 
 // First we sign in the user anonymously
-database.ref('/image').on("child_added", function (snapshot) {
+fbDB.ref('/image').on("child_added", function (snapshot) {
     var v = snapshot.val();
 
-    $('.photowall').append($('<img src="' + v.src + '"/>'));
+    $('.photowall').prepend($('<img src="' + v.src + '"/>'));
 });
 
 
@@ -49,8 +51,7 @@ if ($('#camera-stream').length) {
 
     if (!navigator.getMedia) {
         displayErrorMessage("Your browser doesn't have support for the navigator.getUserMedia interface.");
-    }
-    else {
+    } else {
 
         // Request the camera.
         navigator.getMedia(
@@ -138,18 +139,30 @@ if ($('#camera-stream').length) {
         e.preventDefault();
 
         newPostRef = fbDBref.child('image');
+        d = new Date();
 
-        console.log(newPostRef)
+        var canvas = document.getElementById("canvas");
+        canvas.toBlob(function (blob) {
+            var name = "/" + d.getTime() + ".png",
+                f = storageRef.child(name),
+                task = f.put(blob);
 
-        newPostRef.push({
-            "src": image.getAttribute('src'),
-            "text": newPostRef.key
-        }).then(function () {
-            alert('upload successful')
+            task.on('state_changed', function (snapshot) {
+            }, function (error) {
+                alert("Unable to save image.");
+                alert(error);
+            }, function () {
+                var url = task.snapshot.downloadURL;
+                console.log("Saved to " + url);
+
+                newPostRef.push({
+                    "src": url
+                }).then(function () {
+                    alert('upload successful')
+                });
+            });
         });
-
-    })
-
+    });
 
 
     function showVideo() {
@@ -165,9 +178,8 @@ if ($('#camera-stream').length) {
         // Here we're using a trick that involves a hidden canvas element.
 
         var hidden_canvas = document.querySelector('canvas'),
-            context = hidden_canvas.getContext('2d');
-
-        var width = video.videoWidth,
+            context = hidden_canvas.getContext('2d'),
+            width = video.videoWidth,
             height = video.videoHeight;
 
         if (width && height) {
