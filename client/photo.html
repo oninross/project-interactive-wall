@@ -12,21 +12,29 @@
 </head>
 
 <body>
-    <div class="camera"></div>
-    <div id="photo"></div>
+    <div class="app">
 
-    <form class="clicker">
-        <input class="clicker--btn" type=button value="Take Snapshot">
-    </form>
+        <a href="#" id="start-camera" class="visible">Touch here to start the app.</a>
+        <video id="camera-stream"></video>
+        <img id="snap">
 
-    <!-- <form action="">
-        <input id="m" autocomplete="off" /><button>Send</button>
-    </form> -->
+        <p id="error-message"></p>
+
+        <div class="controls">
+            <a href="#" id="delete-photo" title="Delete Photo" class="disabled"><i class="material-icons">delete</i></a>
+            <a href="#" id="take-photo" title="Take Photo"><i class="material-icons">camera_alt</i></a>
+            <a href="#" id="upload-photo" title="Save Photo" class="disabled"><i class="material-icons">file_upload</i></a>
+        </div>
+
+        <!-- Hidden canvas element. Used for taking snapshot of video. -->
+        <canvas></canvas>
+
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-    <script src="webcam.min.js"></script>
+    <script src="jpeg_camera_with_dependencies.min.js"></script>
     <script src="main.js"></script>
 </body>
 
