@@ -143,10 +143,17 @@ form button {
 
 .app canvas#canvas {
     display: none;
+    /* bottom: 0;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    top: 850px;
+    z-index: 20; */
 }
 
 .app video#camera-stream.visible,
-.app img#snap.visible
+.app img#snap.visible,
 .app canvas#canvas.visible,
 .app #error-message.visible {
     display: block;
@@ -154,6 +161,22 @@ form button {
 
 .app .controls.visible {
     display: flex;
+}
+
+.app #crop-viewer {
+    position: relative;
+}
+
+.app #crop-viewer {
+    border: 1px solid #ff0;
+    height: 75vw;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    top: 18vh;
+    width: 75vw;
+    z-index: 15;
 }
 
 @media (max-width: 1000px) {

@@ -36,20 +36,19 @@ $(() => {
     // Device Camera
     if ($('.app').length) {
         var video = document.querySelector('#camera-stream'),
-        start_camera = document.querySelector('#start-camera'),
-        controls = document.querySelector('.controls'),
-        take_photo_btn = document.querySelector('#take-photo'),
-        delete_photo_btn = document.querySelector('#delete-photo'),
-        upload_photo_btn = document.querySelector('#upload-photo'),
-        hidden_photo_btn = document.querySelector('#hidden-photo'),
-        error_message = document.querySelector('#error-message'),
-        canvas = document.querySelector('#canvas'),
-        image;
+            start_camera = document.querySelector('#start-camera'),
+            image = document.querySelector('#snap'),
+            controls = document.querySelector('.controls'),
+            take_photo_btn = document.querySelector('#take-photo'),
+            delete_photo_btn = document.querySelector('#delete-photo'),
+            upload_photo_btn = document.querySelector('#upload-photo'),
+            hidden_photo_btn = document.querySelector('#hidden-photo'),
+            error_message = document.querySelector('#error-message'),
+            canvas = document.querySelector('#canvas');
 
         controls.classList.add("visible");
 
         take_photo_btn.addEventListener("click", function (e) {
-
             e.preventDefault();
 
             hidden_photo_btn.click();
@@ -62,21 +61,49 @@ $(() => {
 
             // FileReader support
             if (FileReader && files && files.length) {
-                var fr = new FileReader();
+                var fr = new FileReader(),
+                    context = canvas.getContext('2d');
 
-                fr.onload = function () {
-                    // console.log(fr.result)
-                    image = new Image();
+                fr.onload = function (e) {
+                    image.src = fr.result;
+                    image.classList.add("visible");
 
-                    image.addEventListener("load", function () {
-                        canvas.width = $(window).width();
-                        canvas.height = $(window).width();
-                        canvas.classList.add("visible");
-                        canvas.getContext("2d").drawImage(image, 0, 0);
-                    });
+                    image.onload = function () {
+                        // draw cropped image
+                        var scale = image.naturalWidth / $(window).width(),
+                            // sx = 0,
+                            // sy = 0,
+                            // swidth = image.naturalWidth,
+                            // sheight = image.naturalHeight,
+                            // width = image.naturalWidth / scale,
+                            // height = image.naturalHeight / scale,
+                            // x = 0,
+                            // y = 0;
+                            sx = $('#crop-viewer').offset().left * scale,
+                            sy = $('#crop-viewer').offset().top * scale,
+                            swidth = $('#crop-viewer').width() * scale,
+                            sheight = $('#crop-viewer').height() * scale,
+                            width = 1000,
+                            height = 1000,
+                            x = 0,
+                            y = 0;
 
-                    image.setAttribute('src', fr.result);
-                }
+                        // img         Specifies the image, canvas, or video element to use
+                        // sx          Optional. The x coordinate where to start clipping
+                        // sy          Optional. The y coordinate where to start clipping
+                        // swidth      Optional. The width of the clipped image
+                        // sheight     Optional. The height of the clipped image
+                        // x           The x coordinate where to place the image on the canvas
+                        // y           The y coordinate where to place the image on the canvas
+                        // width       Optional. The width of the image to use (stretch or reduce the image)
+                        // height      Optional. The height of the image to use (stretch or reduce the image)
+                        // canvas.width = image.naturalWidth / scale;
+                        // canvas.height = image.naturalHeight / scale;
+                        canvas.width = 1000;
+                        canvas.height = 1000;
+                        context.drawImage(image, sx, sy, swidth, sheight, x, y, width, height);
+                    };
+                };
 
                 fr.readAsDataURL(files[0]);
             } else {
@@ -84,9 +111,38 @@ $(() => {
                 // them on the server until the user's session ends.
             }
 
+
             // Enable delete and save buttons
             delete_photo_btn.classList.remove("disabled");
             upload_photo_btn.classList.remove("disabled");
+        });
+
+        upload_photo_btn.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            newPostRef = fbDBref.child('image');
+            d = new Date();
+
+            canvas.toBlob(function (blob) {
+                var name = "/" + d.getTime() + ".jpg",
+                    f = storageRef.child(name),
+                    task = f.put(blob);
+
+                task.on('state_changed', function (snapshot) {
+                }, function (error) {
+                    alert("Unable to save image.");
+                    alert(JSON.stringify(error));
+                }, function () {
+                    var url = task.snapshot.downloadURL;
+                    console.log("Saved to " + url);
+
+                    newPostRef.push({
+                        "src": url
+                    }).then(function () {
+                        alert('upload successful')
+                    });
+                });
+            });
         });
 
         delete_photo_btn.addEventListener("click", function (e) {
@@ -96,34 +152,6 @@ $(() => {
             // Disable delete and save buttons
             delete_photo_btn.classList.add("disabled");
             upload_photo_btn.classList.add("disabled");
-        });
-
-        upload_photo_btn.addEventListener("click", function (e) {
-            e.preventDefault();
-
-            newPostRef = fbDBref.child('image');
-            d = new Date();
-
-            blob = dataURLtoBlob(image.src);
-
-            var name = "/" + d.getTime() + ".jpg",
-                f = storageRef.child(name),
-                task = f.put(blob);
-
-            task.on('state_changed', function (snapshot) {
-            }, function (error) {
-                alert("Unable to save image.");
-                alert(JSON.stringify(error));
-            }, function () {
-                var url = task.snapshot.downloadURL;
-                console.log("Saved to " + url);
-
-                newPostRef.push({
-                    "src": url
-                }).then(function () {
-                    alert('upload successful')
-                });
-            });
         });
 
         function dataURLtoBlob(dataurl) {
