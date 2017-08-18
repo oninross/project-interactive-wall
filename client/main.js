@@ -35,16 +35,16 @@ $(() => {
 
     // Device Camera
     if ($('.app').length) {
-        var video = document.querySelector('#camera-stream'),
-            start_camera = document.querySelector('#start-camera'),
-            image = document.querySelector('#snap'),
+        var image = document.querySelector('#snap'),
             controls = document.querySelector('.controls'),
             take_photo_btn = document.querySelector('#take-photo'),
             delete_photo_btn = document.querySelector('#delete-photo'),
             upload_photo_btn = document.querySelector('#upload-photo'),
             hidden_photo_btn = document.querySelector('#hidden-photo'),
             error_message = document.querySelector('#error-message'),
-            canvas = document.querySelector('#canvas');
+            canvas = document.querySelector('#canvas'),
+            rotation = 0,
+            vanilla;
 
         controls.classList.add("visible");
 
@@ -62,46 +62,44 @@ $(() => {
             // FileReader support
             if (FileReader && files && files.length) {
                 var fr = new FileReader(),
-                    context = canvas.getContext('2d');
+                    square = $(window).width() - 50;
 
                 fr.onload = function (e) {
                     image.src = fr.result;
-                    image.classList.add("visible");
 
                     image.onload = function () {
-                        // draw cropped image
-                        var scale = image.naturalWidth / $(window).width(),
-                            // sx = 0,
-                            // sy = 0,
-                            // swidth = image.naturalWidth,
-                            // sheight = image.naturalHeight,
-                            // width = image.naturalWidth / scale,
-                            // height = image.naturalHeight / scale,
-                            // x = 0,
-                            // y = 0;
-                            sx = $('#crop-viewer').offset().left * scale,
-                            sy = $('#crop-viewer').offset().top * scale,
-                            swidth = $('#crop-viewer').width() * scale,
-                            sheight = $('#crop-viewer').height() * scale,
-                            width = 1000,
-                            height = 1000,
-                            x = 0,
-                            y = 0;
+                        if ($('.croppie-container').length) {
+                            vanilla.bind({
+                                url: image.src
+                            });
+                        } else {
+                            vanilla = new Croppie(image, {
+                                enableOrientation: true,
+                                viewport: {
+                                    height: square,
+                                    width: square
+                                },
+                                showZoomer: false
+                            });
+                        }
 
-                        // img         Specifies the image, canvas, or video element to use
-                        // sx          Optional. The x coordinate where to start clipping
-                        // sy          Optional. The y coordinate where to start clipping
-                        // swidth      Optional. The width of the clipped image
-                        // sheight     Optional. The height of the clipped image
-                        // x           The x coordinate where to place the image on the canvas
-                        // y           The y coordinate where to place the image on the canvas
-                        // width       Optional. The width of the image to use (stretch or reduce the image)
-                        // height      Optional. The height of the image to use (stretch or reduce the image)
-                        // canvas.width = image.naturalWidth / scale;
-                        // canvas.height = image.naturalHeight / scale;
-                        canvas.width = 1000;
-                        canvas.height = 1000;
-                        context.drawImage(image, sx, sy, swidth, sheight, x, y, width, height);
+                        getOrientation(hidden_photo_btn.files[0], function (orientation) {
+                            switch (orientation) {
+                                case 8:
+                                    rotation = -90;
+                                    break;
+                                case 3:
+                                    rotation = 180;
+                                    break;
+                                case 6:
+                                    rotation = 90;
+                                    break;
+                            }
+                        });
+
+                        setTimeout(function() {
+                            vanilla.rotate(rotation);
+                        }, 14);
                     };
                 };
 
@@ -120,10 +118,12 @@ $(() => {
         upload_photo_btn.addEventListener("click", function (e) {
             e.preventDefault();
 
+            alert('Uploading image');
+
             newPostRef = fbDBref.child('image');
             d = new Date();
 
-            canvas.toBlob(function (blob) {
+            vanilla.result('blob').then(function (blob) {
                 var name = "/" + d.getTime() + ".jpg",
                     f = storageRef.child(name),
                     task = f.put(blob);
@@ -146,22 +146,54 @@ $(() => {
         });
 
         delete_photo_btn.addEventListener("click", function (e) {
-
             e.preventDefault();
+
+            if ($('.croppie-container').length) {
+                vanilla.destroy();
+                $('#snap').unwrap();
+            }
 
             // Disable delete and save buttons
             delete_photo_btn.classList.add("disabled");
             upload_photo_btn.classList.add("disabled");
         });
 
-        function dataURLtoBlob(dataurl) {
-            var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-                bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-            while (n--) {
-                u8arr[n] = bstr.charCodeAt(n);
-            }
-            return new Blob([u8arr], { type: mime });
-        }
+        function getOrientation(file, callback) {
+            var reader = new FileReader();
+
+            reader.onload = function (event) {
+                var view = new DataView(event.target.result);
+
+                if (view.getUint16(0, false) != 0xFFD8) return callback(-2);
+
+                var length = view.byteLength,
+                    offset = 2;
+
+                while (offset < length) {
+                    var marker = view.getUint16(offset, false);
+                    offset += 2;
+
+                    if (marker == 0xFFE1) {
+                        if (view.getUint32(offset += 2, false) != 0x45786966) {
+                            return callback(-1);
+                        }
+                        var little = view.getUint16(offset += 6, false) == 0x4949;
+                        offset += view.getUint32(offset + 4, little);
+                        var tags = view.getUint16(offset, little);
+                        offset += 2;
+
+                        for (var i = 0; i < tags; i++)
+                            if (view.getUint16(offset + (i * 12), little) == 0x0112)
+                                return callback(view.getUint16(offset + (i * 12) + 8, little));
+                    }
+                    else if ((marker & 0xFF00) != 0xFF00) break;
+                    else offset += view.getUint16(offset, false);
+                }
+                return callback(-1);
+            };
+
+            reader.readAsArrayBuffer(file.slice(0, 64 * 1024));
+        };
 
         function displayErrorMessage(error_msg, error) {
             error = error || "";
@@ -173,8 +205,7 @@ $(() => {
 
             hideUI();
             error_message.classList.add("visible");
-        }
-
+        };
 
         function hideUI() {
             // Helper function for clearing the app UI.
