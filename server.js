@@ -1,6 +1,7 @@
 var express = require('express'),
     app = express(),
     fs = require('fs'),
+    http = require('http'),
     https = require('https'),
     io = require('socket.io')(https),
     httpsOptions = {
@@ -39,6 +40,10 @@ io.on('connection', function (socket) {
     });
 });
 
-https.createServer(httpsOptions, app).listen(process.env.PORT || 3000, function () {
+// https.createServer(httpsOptions, app).listen(process.env.PORT || 3000, function () {
+//     console.log('listening on *:3000');
+// });
+
+app.listen(process.env.PORT || 3000, function () {
     console.log('listening on *:3000');
 });
