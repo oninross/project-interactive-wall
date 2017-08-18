@@ -72,6 +72,7 @@ form button {
     position: absolute;
     top: 0;
     left: 0;
+    max-width: 100%;
     width: 100%;
     z-index: 10;
     display: none;
@@ -101,7 +102,7 @@ form button {
     display: none;
 }
 
-.app #ios-photo {
+.app #hidden-photo {
     display: none;
 }
 
@@ -140,12 +141,13 @@ form button {
     font-size: 32px;
 }
 
-.app canvas {
+.app canvas#canvas {
     display: none;
 }
 
 .app video#camera-stream.visible,
-.app img#snap.visible,
+.app img#snap.visible
+.app canvas#canvas.visible,
 .app #error-message.visible {
     display: block;
 }
