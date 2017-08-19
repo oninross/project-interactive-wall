@@ -1,0 +1,13 @@
+// photowall styles
+.photowall {
+    ul {
+        @include clearfix;
+    }
+
+    li {
+        @include normalise-list;
+
+        float: left;
+        width: 20%;
+    }
+}
