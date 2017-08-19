@@ -60,34 +60,34 @@ export default class Photoapp {
                         socket.emit('photo flick', base64);
                     });
 
-                    // newPostRef = fbDBref.child('image');
-                    // date = new Date();
+                    newPostRef = fbDBref.child('image');
+                    date = new Date();
 
-                    // that.photoAppView.result('blob', { width: 500, height: 500 }).then(function (blob) {
-                        //     name = "/" + date.getTime() + ".jpg";
-                        //     f = storageRef.child(name);
-                        //     task = f.put(blob);
+                    that.photoAppView.result('blob', { width: 500, height: 500 }).then(function (blob) {
+                        name = "/" + date.getTime() + ".jpg";
+                        f = storageRef.child(name);
+                        task = f.put(blob);
 
-                        //     task.on('state_changed', function (snapshot) {
-                        //         console.log(snapshot);
-                        //     }, function (error) {
-                        //         toaster("Unable to save image. -_-");
-                        //         toaster(JSON.stringify(error));
-                        //         that.$viewer.addClass('-disabled');
-                        //         that.$controls.removeClass('-disabled');
-                        //         that.$loader.addClass('-hide');
-                        //     }, function () {
-                        //         url = task.snapshot.downloadURL;
+                        task.on('state_changed', function (snapshot) {
+                            console.log(snapshot);
+                        }, function (error) {
+                            toaster("Unable to save image. -_-");
+                            toaster(JSON.stringify(error));
+                            that.$viewer.addClass('-disabled');
+                            that.$controls.removeClass('-disabled');
+                            that.$loader.addClass('-hide');
+                        }, function () {
+                            url = task.snapshot.downloadURL;
 
-                        //         newPostRef.push({
-                        //             "src": url
-                        //         }).then(function () {
-                        //             toaster('Upload successful! ^_^');
+                            newPostRef.push({
+                                "src": url
+                            }).then(function () {
+                                toaster('Upload successful! ^_^');
 
-                        //             that.reset();
-                        //         });
-                        //     });
-                    // });
+                                that.reset();
+                            });
+                        });
+                    });
                 }
             });
 

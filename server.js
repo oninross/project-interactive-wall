@@ -3,8 +3,8 @@ var express = require('express'),
     fs = require('fs'),
     http = require('http').Server(app),
     https = require('https'),
-    // io = require('socket.io')(http),
-    io = require('socket.io')(https),
+    io = require('socket.io')(http),
+    // io = require('socket.io')(https),
     httpsOptions = {
         key: fs.readFileSync('key.pem'),
         cert: fs.readFileSync('cert.pem')
@@ -33,10 +33,10 @@ io.on('connection', function (socket) {
     });
 });
 
-https.createServer(httpsOptions, app).listen(process.env.PORT || 8888, function () {
-    console.log('listening on *:8888');
-});
-
-// http.listen(process.env.PORT || 8888, function () {
+// https.createServer(httpsOptions, app).listen(process.env.PORT || 8888, function () {
 //     console.log('listening on *:8888');
 // });
+
+http.listen(process.env.PORT || 8888, function () {
+    console.log('listening on *:8888');
+});
