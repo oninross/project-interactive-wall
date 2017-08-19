@@ -31,6 +31,18 @@ router.get('/', function (req, res) {
     if (req.device.type == 'phone') {
         res.redirect('/photo');
     }
+
+    res.sendFile(__dirname + '/client/index.html');
+});
+
+router.get('/photo', function (req, res) {
+    console.log('\x1b[35m', req.device.type);
+
+    if (req.device.type == 'desktop') {
+        res.redirect('/');
+    }
+
+    res.sendFile(__dirname + '/client/photo/index.html');
 });
 
 io.on('connection', function (socket) {
@@ -50,7 +62,7 @@ io.on('connection', function (socket) {
 // });
 
 http.listen(process.env.PORT || 8888, function () {
-    console.log('\x1b[36m', 'listening on *:8888');
+    console.log('listening on *:8888');
 });
 
 // Reset = "\x1b[0m"
