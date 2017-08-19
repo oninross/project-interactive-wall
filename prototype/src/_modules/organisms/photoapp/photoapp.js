@@ -158,7 +158,6 @@ export default class Photoapp {
                 that.$polaroid.removeClass('-hide');
 
                 that.photoAppView.result('base64', { width: 500, height: 500 }).then(function (base64) {
-                    console.log(base64);
                     that.$polaroid.find('img').attr('src', base64);
                 });
             });
@@ -214,6 +213,8 @@ export default class Photoapp {
     }
 
     reset() {
+        const that = this;
+
         that.photoAppView.destroy();
         that.$viewer.removeClass('-disabled');
         that.$controls.addClass('-disabled');

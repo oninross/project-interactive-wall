@@ -273,7 +273,6 @@ background: #ccc;
 
 // photoapp styles
 .photoapp {
-    background-color: $black;
     height: 100vh;
     overflow: hidden;
     position: relative;
@@ -325,6 +324,14 @@ background: #ccc;
             transform: translateY(-78vh) rotate(5deg);
             opacity: 0;
         }
+
+        .photowall & {
+            @include transition(none, 0s, linear);
+
+            bottom: auto;
+            right: auto;
+            transform: translateX(36vw) translateY(-65vh) rotate(0);
+        }
     }
 
     &__viewer {
@@ -349,6 +356,10 @@ background: #ccc;
             &:before {
                 height: 100%;
             }
+        }
+
+        .croppie-container .cr-viewport {
+            border: 2px solid $yellow;
         }
     }
 

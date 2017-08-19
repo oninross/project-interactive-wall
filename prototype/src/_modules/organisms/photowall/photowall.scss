@@ -14,11 +14,15 @@
         }
 
         @include desktop {
-            width: 16.666667%;
+            width: 8.333333%;
         }
     }
 
     img {
         margin-bottom: 0;
+    }
+
+    &__wrapper {
+        overflow: hidden;
     }
 }
