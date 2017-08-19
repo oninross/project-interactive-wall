@@ -56,14 +56,26 @@ export default class Photoapp {
                     that.$controls.addClass('-disabled');
                     that.$polaroid.addClass('-throw');
 
-                    that.photoAppView.result('base64', { width: 500, height: 500 }).then(function (base64) {
+                    that.photoAppView.result({
+                        type: 'base64',
+                        size: {
+                            width: 500,
+                            height: 500
+                        }
+                    }).then(function (base64) {
                         socket.emit('photo flick', base64);
                     });
 
                     newPostRef = fbDBref.child('image');
                     date = new Date();
 
-                    that.photoAppView.result('blob', { width: 500, height: 500 }).then(function (blob) {
+                    that.photoAppView.result({
+                        type: 'blob',
+                        size: {
+                            width: 500,
+                            height: 500
+                        }
+                    }).then(function (blob) {
                         name = "/" + date.getTime() + ".jpg";
                         f = storageRef.child(name);
                         task = f.put(blob);
@@ -97,6 +109,13 @@ export default class Photoapp {
 
                 that.$controls.removeClass('-disabled');
                 that.$camera.addClass('-hide');
+
+                $('body').animate({
+                    scrollTop: $(document).height(),
+                }, {
+                    duration: 500,
+                    easing: 'easeOutExpo'
+                });
 
                 // FileReader support
                 if (FileReader && files && files.length) {
@@ -137,7 +156,7 @@ export default class Photoapp {
 
                             setTimeout(function () {
                                 that.photoAppView.rotate(rotation);
-                            }, 14);
+                            }, 17);
                         };
                     };
 
@@ -157,7 +176,13 @@ export default class Photoapp {
             $('.js-crop-photo').on('click', function () {
                 that.$polaroid.removeClass('-hide');
 
-                that.photoAppView.result('base64', { width: 500, height: 500 }).then(function (base64) {
+                that.photoAppView.result({
+                    type: 'base64',
+                    size: {
+                        width: 500,
+                        height: 500
+                    }
+                }).then(function (base64) {
                     that.$polaroid.find('img').attr('src', base64);
                 });
             });
