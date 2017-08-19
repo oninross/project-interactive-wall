@@ -29,10 +29,36 @@
   </head>
   <body>
     <main id="main">
-      <section class="section photowall">
-        <ul>
-          <li class="photowall__sample"></li>
-        </ul>
+      <section class="section photoapp">
+        <div class="photoapp__loader -hide">
+          <svg viewbox="25 25 50 50" class="circular">
+            <circle cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10" class="path"></circle>
+          </svg>
+        </div>
+        <div class="photoapp__polaroid -hide"><img src="http://placehold.it/300x300"></div>
+        <button type="button" class="photoapp__btn -btn -camera js-take-photo">
+          <svg height="48" viewbox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="6.4"></circle>
+            <path d="M18 4l-3.66 4h-6.34c-2.21 0-4 1.79-4 4v24c0 2.21 1.79 4 4 4h32c2.21 0 4-1.79 4-4v-24c0-2.21-1.79-4-4-4h-6.34l-3.66-4h-12zm6 30c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10z"></path>
+            <path d="M0 0h48v48h-48z" fill="none"></path>
+          </svg>
+        </button>
+        <div class="photoapp__viewer"><img class="photoapp__img"></div>
+        <div class="photoapp__controls -disabled">
+          <button type="button" class="photoapp__btn -btn -delete js-delete-photo">
+            <svg height="48" viewbox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 38c0 2.21 1.79 4 4 4h16c2.21 0 4-1.79 4-4v-24h-24v24zm26-30h-7l-2-2h-10l-2 2h-7v4h28v-4z"></path>
+              <path d="M0 0h48v48h-48z" fill="none"></path>
+            </svg>
+          </button>
+          <button type="button" class="photoapp__btn -btn -done js-crop-photo">
+            <svg height="48" viewbox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 0h48v48h-48z" fill="none"></path>
+              <path d="M18 32.34l-8.34-8.34-2.83 2.83 11.17 11.17 24-24-2.83-2.83z"></path>
+            </svg>
+          </button>
+          <input type="file" name="file" accept="image/*" capture="" class="photoapp__hidden js-open-photo">
+        </div>
       </section>
     </main>
     <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>

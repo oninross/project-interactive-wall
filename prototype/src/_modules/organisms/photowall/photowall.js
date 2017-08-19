@@ -6,10 +6,16 @@ import imagesloaded from 'imagesloaded';
 
 export default class Photowall {
     constructor() {
-        const fbDB = firebase.database(),
-            $photoWall = $('.photowall ul');
+        const $photoWall = $('.photowall ul');
 
         if ($photoWall.length) {
+            const fbDB = firebase.database(),
+                socket = io();
+
+            socket.on('photo flick', function (data) {
+                // Do something funky
+            });
+
             $photoWall.masonry({
                 itemSelector: ".photowall li",
                 columnWidth: ".photowall__sample"

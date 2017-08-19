@@ -9,8 +9,7 @@
     "https": "^1.0.0",
     "openssl": "1.1.0",
     "socket.io": "2.0.3",
-    "web-push": "3.2.2",
-    "yarn": "0.27.5"
+    "web-push": "3.2.2"
   },
   "engines": {
     "node": "6.11.2",

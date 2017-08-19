@@ -3,15 +3,15 @@
 import firebase from 'firebase';
 import Croppie from '../../../../node_modules/croppie/croppie';
 import { toaster } from '../../../_assets/interactive-wall/js/_material';
-// import Draggable from '../../../../node_modules/gsap/src/uncompressed/utils/Draggable';
 import Hammer from '../../../../node_modules/hammerjs/hammer.min';
 
 export default class Photoapp {
     constructor() {
-        if ($('.photoapp')) {
+        if ($('.photoapp').length) {
             const that = this,
                 $window = $(window),
-                square = $window.width() - 50;
+                square = $window.width() - 50,
+                socket = io();
 
             var rotation = 0,
                 fbDB = firebase.database(),
@@ -50,47 +50,46 @@ export default class Photoapp {
                 if (e.angle < 0) {
                     toaster('Uploading image');
 
+
                     that.$loader.removeClass('-hide');
                     that.$viewer.addClass('-disabled');
                     that.$controls.addClass('-disabled');
                     that.$polaroid.addClass('-throw');
 
+                    that.photoAppView.result('base64', { width: 500, height: 500 }).then(function (base64) {
+                        socket.emit('photo flick', base64);
+                    });
+
                     // newPostRef = fbDBref.child('image');
                     // date = new Date();
 
-                    // that.photoAppView.result('blob', { 500, 500}).then(function (blob) {
-                    //     name = "/" + date.getTime() + ".jpg";
-                    //     f = storageRef.child(name);
-                    //     task = f.put(blob);
+                    // that.photoAppView.result('blob', { width: 500, height: 500 }).then(function (blob) {
+                        //     name = "/" + date.getTime() + ".jpg";
+                        //     f = storageRef.child(name);
+                        //     task = f.put(blob);
 
-                    //     task.on('state_changed', function (snapshot) {
-                    //         console.log(snapshot);
-                    //     }, function (error) {
-                    //         toaster("Unable to save image. -_-");
-                    //         toaster(JSON.stringify(error));
-                    //         that.$viewer.addClass('-disabled');
-                    //         that.$controls.removeClass('-disabled');
-                    //         that.$loader.addClass('-hide');
-                    //     }, function () {
-                    //         url = task.snapshot.downloadURL;
+                        //     task.on('state_changed', function (snapshot) {
+                        //         console.log(snapshot);
+                        //     }, function (error) {
+                        //         toaster("Unable to save image. -_-");
+                        //         toaster(JSON.stringify(error));
+                        //         that.$viewer.addClass('-disabled');
+                        //         that.$controls.removeClass('-disabled');
+                        //         that.$loader.addClass('-hide');
+                        //     }, function () {
+                        //         url = task.snapshot.downloadURL;
 
-                    //         newPostRef.push({
-                    //             "src": url
-                    //         }).then(function () {
-                    //             toaster('Upload successful! ^_^');
+                        //         newPostRef.push({
+                        //             "src": url
+                        //         }).then(function () {
+                        //             toaster('Upload successful! ^_^');
 
-                    //             that.reset();
-                    //         });
-                    //     });
+                        //             that.reset();
+                        //         });
+                        //     });
                     // });
                 }
             });
-
-            // Draggable.create('.photoapp__polaroid', {
-            //     type: 'y',
-            //     edgeResistance: 0.65,
-            //     throwProps: true
-            // });
 
             $('.js-open-photo').on('change', function (e) {
                 var tgt = e.target || window.event.srcElement,
@@ -158,7 +157,7 @@ export default class Photoapp {
             $('.js-crop-photo').on('click', function () {
                 that.$polaroid.removeClass('-hide');
 
-                that.photoAppView.result('base64', { width: 500, height: 500}).then(function (base64) {
+                that.photoAppView.result('base64', { width: 500, height: 500 }).then(function (base64) {
                     console.log(base64);
                     that.$polaroid.find('img').attr('src', base64);
                 });
@@ -220,7 +219,7 @@ export default class Photoapp {
         that.$controls.addClass('-disabled');
         that.$camera.removeClass('-hide');
         that.$loader.addClass('-hide');
-        that.$polaroid.addClass('-hide');
+        that.$polaroid.addClass('-hide').removeClass('-throw');
         $('.photoapp__img').unwrap().attr('src', '');
     }
 }

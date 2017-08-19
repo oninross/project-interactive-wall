@@ -302,13 +302,14 @@ background: #ccc;
     }
 
     &__polaroid {
-        @include transition(transform, $animTime, $easeInOutExpo);
+        @include transition((opacity, transform), $animTime, $easeInOutExpo);
         @include absolute-center;
 
         border: 20px solid $white;
         height: 275px;
-        width: 275px;
+        opacity: 1;
         transform: translateY(0) rotate(-5deg);
+        width: 275px;
         z-index: 20;
 
         img {
@@ -317,10 +318,12 @@ background: #ccc;
 
         &.-hide {
             transform: translateY(78vh) rotate(5deg);
+            opacity: 0;
         }
 
         &.-throw {
             transform: translateY(-78vh) rotate(5deg);
+            opacity: 0;
         }
     }
 

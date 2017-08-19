@@ -1,8 +1,9 @@
 var express = require('express'),
-    app = express(),
+    app = require('express')(),
     fs = require('fs'),
-    http = require('http'),
+    http = require('http').Server(app),
     https = require('https'),
+    // io = require('socket.io')(http),
     io = require('socket.io')(https),
     httpsOptions = {
         key: fs.readFileSync('key.pem'),
@@ -20,14 +21,6 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/client/index.html');
-});
-
-app.get('/photo', function (req, res) {
-    res.sendFile(__dirname + '/client/photo.html');
-});
-
 io.on('connection', function (socket) {
     console.log('a user connected');
 
@@ -35,15 +28,15 @@ io.on('connection', function (socket) {
         console.log('user disconnected');
     });
 
-    socket.on('photo post', function (data) {
-        io.emit('photo post', msg);
+    socket.on('photo flick', function (data) {
+        io.emit('photo flick', data);
     });
 });
 
-// https.createServer(httpsOptions, app).listen(process.env.PORT || 3000, function () {
-//     console.log('listening on *:3000');
-// });
-
-app.listen(process.env.PORT || 3000, function () {
-    console.log('listening on *:3000');
+https.createServer(httpsOptions, app).listen(process.env.PORT || 8888, function () {
+    console.log('listening on *:8888');
 });
+
+// http.listen(process.env.PORT || 8888, function () {
+//     console.log('listening on *:8888');
+// });
