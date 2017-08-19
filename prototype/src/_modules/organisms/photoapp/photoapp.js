@@ -27,13 +27,15 @@ export default class Photoapp {
                 url,
                 name,
                 f,
-                task;
+                task,
+                progress;
 
             that.$loader = $('.photoapp__loader');
             that.$polaroid = $('.photoapp__polaroid');
             that.$viewer = $('.photoapp__viewer');
             that.$controls = $('.photoapp__controls');
             that.$camera = $('.photoapp__btn.-camera');
+            that.$percent = that.$loader.find('.percent');
             that.photoAppView;
 
             $('.js-take-photo').on('click', function () {
@@ -81,7 +83,10 @@ export default class Photoapp {
                         task = f.put(blob);
 
                         task.on('state_changed', function (snapshot) {
-                            console.log(snapshot);
+                            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                            progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                            console.log('Upload is ' + progress + '% done');
+                            that.$percent.text(progress + '%');
                         }, function (error) {
                             toaster("Unable to save image. -_-");
                             toaster(JSON.stringify(error));
@@ -113,9 +118,9 @@ export default class Photoapp {
                 $('body').animate({
                     scrollTop: $(document).height(),
                 }, {
-                    duration: 500,
-                    easing: 'easeOutExpo'
-                });
+                        duration: 500,
+                        easing: 'easeOutExpo'
+                    });
 
                 // FileReader support
                 if (FileReader && files && files.length) {
@@ -246,6 +251,7 @@ export default class Photoapp {
         that.$camera.removeClass('-hide');
         that.$loader.addClass('-hide');
         that.$polaroid.addClass('-hide').removeClass('-throw');
+        that.$percent.text('0%');
         $('.photoapp__img').unwrap().attr('src', '');
     }
 }
