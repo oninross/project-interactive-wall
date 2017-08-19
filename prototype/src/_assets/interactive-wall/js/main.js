@@ -14,7 +14,7 @@ import * as firebase from 'firebase/app';
 import './_modernizr';
 
 // for testing a11y only.  Remove before integration
-import './tota11y.min';
+// import './tota11y.min';
 
 
 import { debounce, isMobile } from './_helper';
@@ -22,11 +22,11 @@ import { toaster } from './_material';
 
 import Header from '../../../_modules/organisms/header/header';
 import Photowall from '../../../_modules/organisms/photowall/photowall';
+import Photoapp from '../../../_modules/organisms/photoapp/photoapp';
 
 import Navigation from '../../../_modules/molecules/navigation/navigation';
 
 import Galisteners from '../../../_modules/atoms/galisteners/galisteners';
-import TablePreview from '../../../_modules/atoms/table-preview/table-preview';
 
 // Variable declaration
 let $window = $(window),
@@ -51,7 +51,7 @@ $(() => {
     new Header();
     new Photowall();
     new Navigation();
-    new TablePreview();
+    new Photoapp();
 
     ////////////////////////////
     // Set framerate to 60fps //

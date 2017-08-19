@@ -4,13 +4,14 @@ import firebase from 'firebase';
 
 export default class Photowall {
     constructor() {
-        const fbDB = firebase.database();
+        const fbDB = firebase.database(),
+            $photoWall = $('.photowall');
 
-        if ($('.photowall').length) {
+        if ($photoWall.length) {
             fbDB.ref('/image').on("child_added", function (snapshot) {
                 var v = snapshot.val();
 
-                $('.photowall').prepend($('<li><img src="' + v.src + '"/></li>'));
+                $photoWall.prepend($('<li><img src="' + v.src + '"/></li>'));
             });
         }
     }

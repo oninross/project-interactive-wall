@@ -3,6 +3,7 @@
   "version": "1.4.1",
   "dependencies": {
     "browserify-shim": "^3.8.12",
+    "croppie": "^2.5.0",
     "dot": "^1.1.2",
     "firebase": "^4.3.0",
     "gsap": "^1.19.1",
@@ -72,7 +73,8 @@
     "AttrPlugin": "./node_modules/gsap/src/uncompressed/plugins/AttrPlugin.js",
     "CSSPlugin": "./node_modules/gsap/src/uncompressed/plugins/CSSPlugin.js",
     "mCustomScrollbar": "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js",
-    "scrollMonitor": "./node_modules/scrollmonitor/scrollmonitor.js"
+    "scrollMonitor": "./node_modules/scrollmonitor/scrollmonitor.js",
+    "croppie": "./node_modules/croppie/croppie.js"
   },
   "browserify-shim": {
     "jquery": "jQuery",
