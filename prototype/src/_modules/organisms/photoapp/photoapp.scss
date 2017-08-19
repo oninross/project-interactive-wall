@@ -273,6 +273,7 @@ background: #ccc;
 
 // photoapp styles
 .photoapp {
+    background-color: $black;
     height: 100vh;
     overflow: hidden;
     position: relative;
@@ -296,7 +297,30 @@ background: #ccc;
         }
 
         &.-hide {
-            transform: translateY(-60vh);
+            transform: translateY(60vh);
+        }
+    }
+
+    &__polaroid {
+        @include transition(transform, $animTime, $easeInOutExpo);
+        @include absolute-center;
+
+        border: 20px solid $white;
+        height: 275px;
+        width: 275px;
+        transform: translateY(0) rotate(-5deg);
+        z-index: 20;
+
+        img {
+            margin-bottom: 0;
+        }
+
+        &.-hide {
+            transform: translateY(78vh) rotate(5deg);
+        }
+
+        &.-throw {
+            transform: translateY(-78vh) rotate(5deg);
         }
     }
 
@@ -322,10 +346,6 @@ background: #ccc;
             &:before {
                 height: 100%;
             }
-        }
-
-        .croppie-container {
-            background-color: $black;
         }
     }
 
@@ -376,13 +396,14 @@ background: #ccc;
             @include transition(transform, $animTime, $easeInOutExpo);
             @include absolute-center;
 
-            // bottom: 20vh;
+            background-color: $white;
             height: 150px;
             transform: translateY(0);
             width: 150px;
             z-index: 15;
 
             svg {
+                fill: $black;
                 height: 75px;
                 width: 75px;
             }

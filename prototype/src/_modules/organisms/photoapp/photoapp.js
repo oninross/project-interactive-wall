@@ -1,48 +1,103 @@
 'use strict';
 
 import firebase from 'firebase';
-import Croppie from '../../../../node_modules/croppie/croppie.js';
+import Croppie from '../../../../node_modules/croppie/croppie';
 import { toaster } from '../../../_assets/interactive-wall/js/_material';
-
-const $window = $(window),
-    $loader = $('.photoapp__loader'),
-    $viewer = $('.photoapp__viewer'),
-    $controls = $('.photoapp__controls'),
-    $camera = $('.photoapp__btn.-camera'),
-    photoAppImg = document.querySelector('.photoapp__img'),
-    hiddenBtn = document.querySelector('.photoapp__hidden'),
-    square = $window.width() - 50;
-
-var photoAppView;
+// import Draggable from '../../../../node_modules/gsap/src/uncompressed/utils/Draggable';
+import Hammer from '../../../../node_modules/hammerjs/hammer.min';
 
 export default class Photoapp {
     constructor() {
-        const that = this;
-
-        var rotation = 0,
-            fbDB = firebase.database(),
-            fbDBref = fbDB.ref(),
-            storage = firebase.storage(),
-            storageRef = storage.ref(),
-            date,
-            newPostRef,
-            blob,
-            url,
-            name,
-            f,
-            task;
-
         if ($('.photoapp')) {
+            const that = this,
+                $window = $(window),
+                square = $window.width() - 50;
+
+            var rotation = 0,
+                fbDB = firebase.database(),
+                fbDBref = fbDB.ref(),
+                storage = firebase.storage(),
+                storageRef = storage.ref(),
+                polaroid = document.querySelector('.photoapp__polaroid'),
+                photoAppImg = document.querySelector('.photoapp__img'),
+                hiddenBtn = document.querySelector('.photoapp__hidden'),
+                date,
+                newPostRef,
+                blob,
+                url,
+                name,
+                f,
+                task;
+
+            that.$loader = $('.photoapp__loader');
+            that.$polaroid = $('.photoapp__polaroid');
+            that.$viewer = $('.photoapp__viewer');
+            that.$controls = $('.photoapp__controls');
+            that.$camera = $('.photoapp__btn.-camera');
+            that.photoAppView;
+
             $('.js-take-photo').on('click', function () {
                 $('.js-open-photo').trigger('click');
             });
+
+            var hammertime = new Hammer(polaroid);
+
+            hammertime.get('swipe').set({
+                direction: Hammer.DIRECTION_VERTICAL
+            });
+
+            hammertime.on('swipe', function (e) {
+                if (e.angle < 0) {
+                    toaster('Uploading image');
+
+                    that.$loader.removeClass('-hide');
+                    that.$viewer.addClass('-disabled');
+                    that.$controls.addClass('-disabled');
+                    that.$polaroid.addClass('-throw');
+
+                    // newPostRef = fbDBref.child('image');
+                    // date = new Date();
+
+                    // that.photoAppView.result('blob', { 500, 500}).then(function (blob) {
+                    //     name = "/" + date.getTime() + ".jpg";
+                    //     f = storageRef.child(name);
+                    //     task = f.put(blob);
+
+                    //     task.on('state_changed', function (snapshot) {
+                    //         console.log(snapshot);
+                    //     }, function (error) {
+                    //         toaster("Unable to save image. -_-");
+                    //         toaster(JSON.stringify(error));
+                    //         that.$viewer.addClass('-disabled');
+                    //         that.$controls.removeClass('-disabled');
+                    //         that.$loader.addClass('-hide');
+                    //     }, function () {
+                    //         url = task.snapshot.downloadURL;
+
+                    //         newPostRef.push({
+                    //             "src": url
+                    //         }).then(function () {
+                    //             toaster('Upload successful! ^_^');
+
+                    //             that.reset();
+                    //         });
+                    //     });
+                    // });
+                }
+            });
+
+            // Draggable.create('.photoapp__polaroid', {
+            //     type: 'y',
+            //     edgeResistance: 0.65,
+            //     throwProps: true
+            // });
 
             $('.js-open-photo').on('change', function (e) {
                 var tgt = e.target || window.event.srcElement,
                     files = tgt.files;
 
-                $controls.removeClass('-disabled');
-                $camera.addClass('-hide');
+                that.$controls.removeClass('-disabled');
+                that.$camera.addClass('-hide');
 
                 // FileReader support
                 if (FileReader && files && files.length) {
@@ -53,11 +108,11 @@ export default class Photoapp {
 
                         photoAppImg.onload = function () {
                             if ($('.croppie-container').length) {
-                                photoAppView.bind({
+                                that.photoAppView.bind({
                                     url: photoAppImg.src
                                 });
                             } else {
-                                photoAppView = new Croppie(photoAppImg, {
+                                that.photoAppView = new Croppie(photoAppImg, {
                                     enableOrientation: true,
                                     viewport: {
                                         height: square,
@@ -82,7 +137,7 @@ export default class Photoapp {
                             });
 
                             setTimeout(function () {
-                                photoAppView.rotate(rotation);
+                                that.photoAppView.rotate(rotation);
                             }, 14);
                         };
                     };
@@ -101,39 +156,11 @@ export default class Photoapp {
             });
 
             $('.js-crop-photo').on('click', function () {
-                toaster('Uploading image');
+                that.$polaroid.removeClass('-hide');
 
-                $viewer.addClass('-disabled');
-                $controls.addClass('-disabled');
-                $loader.removeClass('-hide');
-
-                newPostRef = fbDBref.child('image');
-                date = new Date();
-
-                photoAppView.result('blob').then(function (blob) {
-                    name = "/" + date.getTime() + ".jpg";
-                    f = storageRef.child(name);
-                    task = f.put(blob);
-
-                    task.on('state_changed', function (snapshot) {
-                        console.log(snapshot);
-                    }, function (error) {
-                        toaster("Unable to save image. -_-");
-                        toaster(JSON.stringify(error));
-                        $viewer.addClass('-disabled');
-                        $controls.removeClass('-disabled');
-                        $loader.addClass('-hide');
-                    }, function () {
-                        url = task.snapshot.downloadURL;
-
-                        newPostRef.push({
-                            "src": url
-                        }).then(function () {
-                            toaster('Upload successful! ^_^');
-
-                            that.reset();
-                        });
-                    });
+                that.photoAppView.result('base64', { width: 500, height: 500}).then(function (base64) {
+                    console.log(base64);
+                    that.$polaroid.find('img').attr('src', base64);
                 });
             });
         }
@@ -188,11 +215,12 @@ export default class Photoapp {
     }
 
     reset() {
-        photoAppView.destroy();
-        $viewer.removeClass('-disabled');
-        $controls.addClass('-disabled');
-        $camera.removeClass('-hide');
-        $loader.addClass('-hide');
+        that.photoAppView.destroy();
+        that.$viewer.removeClass('-disabled');
+        that.$controls.addClass('-disabled');
+        that.$camera.removeClass('-hide');
+        that.$loader.addClass('-hide');
+        that.$polaroid.addClass('-hide');
         $('.photoapp__img').unwrap().attr('src', '');
     }
 }
