@@ -14,6 +14,7 @@ var express = require('express'),
 
 app.use(device.capture());
 app.enable('trust proxy');
+
 app.use(function (req, res, next) {
     if (req.secure) {
         // request was via https, so do no special handling
@@ -23,10 +24,10 @@ app.use(function (req, res, next) {
         res.redirect('https://' + req.headers.host + req.url);
     }
 });
-app.use(express.static(__dirname + '/client'));
-
 
 app.use(router);
+app.use(express.static(__dirname + '/client'));
+
 router.get('/', function (req, res) {
     console.log('\x1b[35m', req.device.type);
 
