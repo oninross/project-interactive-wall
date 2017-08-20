@@ -1,8 +1,8 @@
 {
     "lang": "en",
-    "name": "firestarter",
-    "short_name": "firestarter",
-    "description": "A quick, easy front-end framework and setup for any project",
+    "name": "Digital Wall",
+    "short_name": "Digital Wall",
+    "description": "",
     "start_url": "./index.html",
     "display": "standalone",
     "orientation": "portrait",
