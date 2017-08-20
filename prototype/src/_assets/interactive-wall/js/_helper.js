@@ -35,6 +35,25 @@ let isLargeDesktop = function () {
     return Modernizr.mq('(min-width: 1200px)');
 }
 
+let iOS = function() {
+    var iDevices = [
+        'iPad Simulator',
+        'iPhone Simulator',
+        'iPod Simulator',
+        'iPad',
+        'iPhone',
+        'iPod'
+    ];
+
+    if (!!navigator.platform) {
+        while (iDevices.length) {
+            if (navigator.platform === iDevices.pop()) { return true; }
+        }
+    }
+
+    return false;
+}
+
 
 /*
  * jQuery Easing v1.3 - http://gsgd.co.uk/sandbox/jquery/easing/
@@ -76,6 +95,7 @@ let easeOutExpo = {
 
 export {
     debounce,
+    iOS,
     isMobile,
     isTablet,
     isDesktop,
