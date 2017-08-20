@@ -194,7 +194,7 @@ export default class Photoapp {
             }
         }).then(function (blob) {
             name = "/" + date.getTime() + ".jpg";
-            f = that.storageRef.child(name);
+            f = storageRef.child(name);
             task = f.put(blob);
 
             task.on('state_changed', function (snapshot) {
