@@ -23,10 +23,10 @@ app.use(function (req, res, next) {
         res.redirect('https://' + req.headers.host + req.url);
     }
 });
-app.use(router);
 app.use(express.static(__dirname + '/client'));
 
 
+app.use(router);
 router.get('/', function (req, res) {
     console.log('\x1b[35m', req.device.type);
 
@@ -40,7 +40,7 @@ router.get('/', function (req, res) {
 router.get('/photo', function (req, res) {
     console.log('\x1b[35m', req.device.type);
 
-    if (req.device.type != 'photo') {
+    if (req.device.type != 'phone') {
         res.redirect('/');
     }
 
