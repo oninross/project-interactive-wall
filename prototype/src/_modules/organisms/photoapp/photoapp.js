@@ -180,42 +180,42 @@ export default class Photoapp {
             }
         }).then(function (base64) {
             that.socket.emit('photo flick', base64);
-        });
 
-        that.newPostRef = that.fbDBref.child('image');
-        that.date = new Date();
+            that.newPostRef = that.fbDBref.child('image');
+            that.date = new Date();
 
-        that.photoAppView.result({
-            type: 'blob',
-            size: {
-                width: 500,
-                height: 500
-            }
-        }).then(function (blob) {
-            that.name = "/" + that.date.getTime() + ".jpg";
-            that.f = that.storageRef.child(that.name);
-            that.task = that.f.put(blob);
+            that.photoAppView.result({
+                type: 'blob',
+                size: {
+                    width: 500,
+                    height: 500
+                }
+            }).then(function (blob) {
+                that.name = "/" + that.date.getTime() + ".jpg";
+                that.f = that.storageRef.child(that.name);
+                that.task = that.f.put(blob);
 
-            that.task.on('state_changed', function (snapshot) {
-                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-                that.progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                console.log('Upload is ' + that.progress + '% done');
-                that.$percent.text(that.progress + '%');
-            }, function (error) {
-                toaster("Unable to save image. -_-");
-                toaster(JSON.stringify(error));
-                that.$viewer.addClass('-disabled');
-                that.$controls.removeClass('-disabled');
-                that.$loader.addClass('-hide');
-            }, function () {
-                that.url = that.task.snapshot.downloadURL;
+                that.task.on('state_changed', function (snapshot) {
+                    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                    that.progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                    console.log('Upload is ' + that.progress + '% done');
+                    that.$percent.text(that.progress + '%');
+                }, function (error) {
+                    toaster("Unable to save image. -_-");
+                    toaster(JSON.stringify(error));
+                    that.$viewer.addClass('-disabled');
+                    that.$controls.removeClass('-disabled');
+                    that.$loader.addClass('-hide');
+                }, function () {
+                    that.url = that.task.snapshot.downloadURL;
 
-                that.newPostRef.push({
-                    "src": that.url
-                }).then(function () {
-                    toaster('Upload successful! ^_^');
+                    that.newPostRef.push({
+                        "src": that.url
+                    }).then(function () {
+                        toaster('Upload successful! ^_^');
 
-                    that.reset();
+                        that.reset();
+                    });
                 });
             });
         });
