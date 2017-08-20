@@ -1,7 +1,7 @@
 {
     "lang": "en",
-    "name": "Digital Wall",
-    "short_name": "Digital Wall",
+    "name": "Interactive Wall",
+    "short_name": "Interactive Wall",
     "description": "",
     "start_url": "./index.html",
     "display": "standalone",
