@@ -10,36 +10,25 @@ export default class Photoapp {
     constructor() {
         if ($('.photoapp').length) {
             const that = this,
-                $window = $(window),
-                square = $window.width() - 50,
-                fbDB = firebase.database(),
-                storage = firebase.storage();
-
-            var rotation = 0,
                 polaroid = document.querySelector('.photoapp__polaroid'),
                 photoAppImg = document.querySelector('.photoapp__img'),
                 hiddenBtn = document.querySelector('.photoapp__hidden'),
+                $window = $(window),
+                square = $window.width() - 50;
+
+            var rotation = 0,
                 blob;
 
             that.socket = io();
-            that.fbDBref = fbDB.ref(),
-            that.storageRef = storage.ref(),
-            that.$loader = $('.photoapp__loader');
+            that.$window = $window;
             that.$polaroid = $('.photoapp__polaroid');
             that.$viewer = $('.photoapp__viewer');
             that.$controls = $('.photoapp__controls');
             that.$camera = $('.photoapp__btn.-camera');
-            that.$window = $window;
+            that.$loader = $('.photoapp__loader');
             that.$percent = that.$loader.find('.percent');
             that.isFlicked = false;
-            that.f;
-            that.url;
-            that.date;
-            that.name;
-            that.task;
-            that.newPostRef;
-            that.photoAppView,
-            that.progress;
+            that.photoAppView;
 
             $('.js-take-photo').on('click', function () {
                 $('.js-open-photo').trigger('click');
@@ -144,7 +133,7 @@ export default class Photoapp {
                     that.$polaroid.find('img').attr('src', base64);
                 });
 
-                that.$window.on('devicemotion', function(e) {
+                that.$window.on('devicemotion', function (e) {
                     that.deviceMotion(e, that)
                 });
             });
@@ -164,7 +153,19 @@ export default class Photoapp {
     }
 
     flickPhoto() {
-        const that = this;
+        const that = this,
+            fbDB = firebase.database(),
+            storage = firebase.storage(),
+            fbDBref = fbDB.ref(),
+            storageRef = storage.ref();
+
+        var progress = 0,
+            newPostRef,
+            url,
+            date,
+            name,
+            task,
+            f;
 
         that.$window.off('devicemotion');
         that.$loader.removeClass('-hide');
@@ -182,8 +183,8 @@ export default class Photoapp {
             that.socket.emit('photo flick', base64);
         });
 
-        that.newPostRef = that.fbDBref.child('image');
-        that.date = new Date();
+        newPostRef = fbDBref.child('image');
+        date = new Date();
 
         that.photoAppView.result({
             type: 'blob',
@@ -192,15 +193,15 @@ export default class Photoapp {
                 height: 500
             }
         }).then(function (blob) {
-            that.name = "/" + that.date.getTime() + ".jpg";
-            that.f = that.storageRef.child(that.name);
-            that.task = that.f.put(blob);
+            name = "/" + date.getTime() + ".jpg";
+            f = that.storageRef.child(name);
+            task = f.put(blob);
 
-            that.task.on('state_changed', function (snapshot) {
+            task.on('state_changed', function (snapshot) {
                 // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-                that.progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                console.log('Upload is ' + that.progress + '% done');
-                that.$percent.text(that.progress + '%');
+                progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                console.log('Upload is ' + progress + '% done');
+                that.$percent.text(progress + '%');
             }, function (error) {
                 toaster("Unable to save image. -_-");
                 toaster(JSON.stringify(error));
@@ -208,10 +209,10 @@ export default class Photoapp {
                 that.$controls.removeClass('-disabled');
                 that.$loader.addClass('-hide');
             }, function () {
-                that.url = that.task.snapshot.downloadURL;
+                url = task.snapshot.downloadURL;
 
-                that.newPostRef.push({
-                    "src": that.url
+                newPostRef.push({
+                    "src": url
                 }).then(function () {
                     toaster('Upload successful! ^_^');
 
