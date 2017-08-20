@@ -15,15 +15,15 @@ var express = require('express'),
 app.use(device.capture());
 app.use(router);
 app.use(express.static(__dirname + '/client'));
-app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.setHeader('Access-Control-Allow-Credentials', true);
+// app.use(function (req, res, next) {
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+//     res.setHeader('Content-Type', 'text/html; charset=utf-8');
+//     res.setHeader('Access-Control-Allow-Credentials', true);
 
-    next();
-});
+//     next();
+// });
 
 router.get('/', function (req, res) {
     console.log('\x1b[35m', req.device.type);
