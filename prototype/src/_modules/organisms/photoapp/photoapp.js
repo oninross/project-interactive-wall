@@ -13,8 +13,7 @@ export default class Photoapp {
                 $window = $(window),
                 square = $window.width() - 50,
                 fbDB = firebase.database(),
-                storage = firebase.storage(),
-                socket = io();
+                storage = firebase.storage();
 
             var rotation = 0,
                 polaroid = document.querySelector('.photoapp__polaroid'),
@@ -22,6 +21,7 @@ export default class Photoapp {
                 hiddenBtn = document.querySelector('.photoapp__hidden'),
                 blob;
 
+            that.socket = io();
             that.fbDBref = fbDB.ref(),
             that.storageRef = storage.ref(),
             that.$loader = $('.photoapp__loader');
@@ -179,7 +179,7 @@ export default class Photoapp {
                 height: 500
             }
         }).then(function (base64) {
-            socket.emit('photo flick', base64);
+            that.socket.emit('photo flick', base64);
         });
 
         that.newPostRef = that.fbDBref.child('image');
