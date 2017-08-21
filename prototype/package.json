@@ -1,6 +1,6 @@
 {
   "name": "interactive-wall",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "dependencies": {
     "browserify-shim": "^3.8.12",
     "croppie": "^2.5.0",
@@ -14,7 +14,8 @@
     "malihu-custom-scrollbar-plugin": "^3.1.5",
     "masonry-layout": "^4.2.0",
     "normalize.css": "~5.0.0",
-    "scrollmonitor": "^1.2.3"
+    "scrollmonitor": "^1.2.3",
+    "sightengine": "^1.1.1"
   },
   "devDependencies": {
     "autoprefixer": "~6.7.5",
