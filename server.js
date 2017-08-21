@@ -60,13 +60,13 @@ io.on('connection', function (socket) {
     });
 });
 
-// https.createServer(httpsOptions, app).listen(process.env.PORT || 8888, function () {
-//     console.log('listening on *:8888');
-// });
-
-http.listen(process.env.PORT || 8888, function () {
+https.createServer(httpsOptions, app).listen(process.env.PORT || 8888, function () {
     console.log('listening on *:8888');
 });
+
+// http.listen(process.env.PORT || 8888, function () {
+//     console.log('listening on *:8888');
+// });
 
 // Reset = "\x1b[0m"
 // Bright = "\x1b[1m"
