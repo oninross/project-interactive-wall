@@ -12,8 +12,6 @@ var express = require('express'),
     };
 
 app.use(device.capture());
-app.enable('trust proxy');
-
 app.use(router);
 app.use(express.static(__dirname + '/client'));
 
