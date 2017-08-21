@@ -10,15 +10,15 @@ var express = require('express'),
 app.use(device.capture());
 app.enable('trust proxy');
 
-app.use(function (req, res, next) {
-    if (req.secure) {
-        // request was via https, so do no special handling
-        next();
-    } else {
-        // request was via http, so redirect to https
-        res.redirect('https://' + req.headers.host + req.url);
-    }
-});
+// app.use(function (req, res, next) {
+//     if (req.secure) {
+//         // request was via https, so do no special handling
+//         next();
+//     } else {
+//         // request was via http, so redirect to https
+//         res.redirect('https://' + req.headers.host + req.url);
+//     }
+// });
 
 app.use(router);
 app.use(express.static(__dirname + '/client'));
@@ -27,8 +27,8 @@ router.get('/', function (req, res) {
     console.log('\x1b[35m', req.device.type);
 
     if (req.device.type == 'phone') {
-        // res.redirect('/photo');
-        res.sendFile(__dirname + '/client/photo/index.html');
+        res.redirect('/photo');
+        // res.sendFile(__dirname + '/client/photo/index.html');
     }
 
     res.sendFile(__dirname + '/client/index.html');
@@ -38,8 +38,8 @@ router.get('/photo', function (req, res) {
     console.log('\x1b[35m', req.device.type);
 
     if (req.device.type != 'phone') {
-        // res.redirect('/');
-        res.sendFile(__dirname + '/client/index.html');
+        res.redirect('/');
+        // res.sendFile(__dirname + '/client/index.html');
     }
 
     res.sendFile(__dirname + '/client/photo/index.html');
