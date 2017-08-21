@@ -12,6 +12,7 @@ var express = require('express'),
     };
 
 app.use(device.capture());
+
 app.use(function (req, res, next) {
     if (req.secure) {
         // request was via https, so do no special handling
@@ -22,13 +23,15 @@ app.use(function (req, res, next) {
     }
 });
 
+app.use(router);
 app.use(express.static(__dirname + '/client'));
 
 router.get('/', function (req, res) {
     console.log('\x1b[35m', req.device.type);
 
     if (req.device.type == 'phone') {
-        res.redirect('/photo');
+        // res.redirect('/photo');
+        res.sendFile(__dirname + '/client/photo/index.html');
     }
 
     res.sendFile(__dirname + '/client/index.html');
@@ -38,13 +41,12 @@ router.get('/photo', function (req, res) {
     console.log('\x1b[35m', req.device.type);
 
     if (req.device.type != 'phone') {
-        res.redirect('/');
+        // res.redirect('/');
+        res.sendFile(__dirname + '/client/index.html');
     }
 
     res.sendFile(__dirname + '/client/photo/index.html');
 });
-
-app.use('/', router);
 
 io.on('connection', function (socket) {
     console.log('\x1b[32m', 'a user connected');
