@@ -6,7 +6,6 @@
   "dependencies": {
     "express": "4.15.4",
     "express-device": "^0.4.2",
-    "fs": "0.0.1-security",
     "socket.io": "2.0.3",
     "web-push": "3.2.2"
   },
