@@ -11,15 +11,15 @@ var express = require('express'),
 app.use(ssl());
 app.use(device.capture());
 
-// app.use(function (req, res, next) {
-//     if (req.secure) {
-//         // request was via https, so do no special handling
-//         next();
-//     } else {
-//         // request was via http, so redirect to https
-//         res.redirect('https://' + req.headers.host + req.url);
-//     }
-// });
+app.use(function (req, res, next) {
+    if (req.secure) {
+        // request was via https, so do no special handling
+        next();
+    } else {
+        // request was via http, so redirect to https
+        res.redirect('https://' + req.headers.host + req.url);
+    }
+});
 
 app.use(router);
 app.use(express.static(__dirname + '/client'));
@@ -30,9 +30,10 @@ router.get('/', function (req, res) {
     if (req.device.type == 'phone') {
         res.redirect('/photo');
         // res.sendFile(__dirname + '/client/photo/index.html');
+    } else {
+        res.sendFile(__dirname + '/client/index.html');
     }
 
-    res.sendFile(__dirname + '/client/index.html');
 });
 
 router.get('/photo', function (req, res) {
@@ -41,9 +42,9 @@ router.get('/photo', function (req, res) {
     if (req.device.type != 'phone') {
         res.redirect('/');
         // res.sendFile(__dirname + '/client/index.html');
+    } else {
+        res.sendFile(__dirname + '/client/photo/index.html');
     }
-
-    res.sendFile(__dirname + '/client/photo/index.html');
 });
 
 io.on('connection', function (socket) {
