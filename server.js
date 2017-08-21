@@ -6,7 +6,6 @@ var express = require('express'),
     io = require('socket.io')(http),
     device = require('express-device'),
     router = express.Router(),
-    // io = require('socket.io')(https),
     httpsOptions = {
         key: fs.readFileSync('key.pem'),
         cert: fs.readFileSync('cert.pem')
@@ -14,16 +13,6 @@ var express = require('express'),
 
 app.use(device.capture());
 app.enable('trust proxy');
-
-app.use(function (req, res, next) {
-    if (req.secure) {
-        // request was via https, so do no special handling
-        next();
-    } else {
-        // request was via http, so redirect to https
-        res.redirect('https://' + req.headers.host + req.url);
-    }
-});
 
 app.use(router);
 app.use(express.static(__dirname + '/client'));
@@ -60,13 +49,9 @@ io.on('connection', function (socket) {
     });
 });
 
-https.createServer(httpsOptions, app).listen(process.env.PORT || 8888, function () {
+http.listen(process.env.PORT || 8888, function () {
     console.log('listening on *:8888');
 });
-
-// http.listen(process.env.PORT || 8888, function () {
-//     console.log('listening on *:8888');
-// });
 
 // Reset = "\x1b[0m"
 // Bright = "\x1b[1m"
