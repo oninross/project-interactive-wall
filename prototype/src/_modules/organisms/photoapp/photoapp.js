@@ -13,8 +13,6 @@ export default class Photoapp {
                 polaroid = document.querySelector('.photoapp__polaroid'),
                 $window = $(window);
 
-            var blob;
-
             that.socket = io();
             that.$window = $window;
             that.$message = $('.photoapp__message');
@@ -301,7 +299,7 @@ export default class Photoapp {
 
         that.isFlicked = false;
         that.photoAppView.destroy();
-        that.$message.text('tap to take a photo');
+        that.$message.text('tap to snap a photo');
         that.$viewer.removeClass('-disabled -preview');
         that.$controls.addClass('-disabled').removeClass('-preview');
         that.$camera.removeClass('-hide');

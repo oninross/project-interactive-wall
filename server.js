@@ -5,11 +5,7 @@ var express = require('express'),
     https = require('https'),
     io = require('socket.io')(http),
     device = require('express-device'),
-    router = express.Router(),
-    httpsOptions = {
-        key: fs.readFileSync('key.pem'),
-        cert: fs.readFileSync('cert.pem')
-    };
+    router = express.Router();
 
 app.use(device.capture());
 app.enable('trust proxy');
