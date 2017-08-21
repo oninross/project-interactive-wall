@@ -103,7 +103,7 @@ export default class Photoapp {
 
                             setTimeout(function () {
                                 that.photoAppView.rotate(rotation);
-                            }, 17);
+                            }, 50);
                         };
                     };
 
@@ -112,6 +112,10 @@ export default class Photoapp {
                     // fallback -- perhaps submit the input to an iframe and temporarily store
                     // them on the server until the user's session ends.
                 }
+            });
+
+            $('.js-rotate-photo').on('click', function () {
+                that.photoAppView.rotate(-90);
             });
 
             $('.js-delete-photo').on('click', function () {
