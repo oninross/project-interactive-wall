@@ -12,6 +12,7 @@ var express = require('express'),
     };
 
 app.use(device.capture());
+app.enable('trust proxy');
 
 app.use(function (req, res, next) {
     if (req.secure) {
