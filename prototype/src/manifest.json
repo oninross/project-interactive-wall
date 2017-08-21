@@ -3,7 +3,7 @@
     "name": "Interactive Wall",
     "short_name": "Interactive Wall",
     "description": "",
-    "start_url": "./index.html",
+    "start_url": "./photo/index.html",
     "display": "standalone",
     "orientation": "portrait",
     "background_color": "#111111",
