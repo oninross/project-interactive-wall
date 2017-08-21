@@ -7,8 +7,8 @@ var express = require('express'),
     device = require('express-device'),
     router = express.Router();
 
+app.use(ssl());
 app.use(device.capture());
-app.enable('trust proxy');
 
 // app.use(function (req, res, next) {
 //     if (req.secure) {
