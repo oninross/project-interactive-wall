@@ -5,12 +5,7 @@ var express = require('express'),
     https = require('https'),
     io = require('socket.io')(http),
     device = require('express-device'),
-    router = express.Router(),
-    // io = require('socket.io')(https),
-    httpsOptions = {
-        key: fs.readFileSync('key.pem'),
-        cert: fs.readFileSync('cert.pem')
-    };
+    router = express.Router();
 
 app.use(device.capture());
 app.enable('trust proxy');
@@ -32,7 +27,8 @@ router.get('/', function (req, res) {
     console.log('\x1b[35m', req.device.type);
 
     if (req.device.type == 'phone') {
-        res.redirect('/photo');
+        // res.redirect('/photo');
+        res.sendFile(__dirname + '/client/photo/index.html');
     }
 
     res.sendFile(__dirname + '/client/index.html');
@@ -42,7 +38,8 @@ router.get('/photo', function (req, res) {
     console.log('\x1b[35m', req.device.type);
 
     if (req.device.type != 'phone') {
-        res.redirect('/');
+        // res.redirect('/');
+        res.sendFile(__dirname + '/client/index.html');
     }
 
     res.sendFile(__dirname + '/client/photo/index.html');
@@ -59,10 +56,6 @@ io.on('connection', function (socket) {
         io.emit('photo flick', data);
     });
 });
-
-// https.createServer(httpsOptions, app).listen(process.env.PORT || 8888, function () {
-//     console.log('listening on *:8888');
-// });
 
 http.listen(process.env.PORT || 8888, function () {
     console.log('listening on *:8888');

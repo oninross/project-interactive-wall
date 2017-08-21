@@ -2,7 +2,7 @@
 
 import firebase from 'firebase';
 import Croppie from '../../../../node_modules/croppie/croppie';
-import { toaster } from '../../../_assets/interactive-wall/js/_material';
+import { ripple, toaster } from '../../../_assets/interactive-wall/js/_material';
 import { iOS } from '../../../_assets/interactive-wall/js/_helper';
 import Hammer from '../../../../node_modules/hammerjs/hammer.min';
 
@@ -11,16 +11,11 @@ export default class Photoapp {
         if ($('.photoapp').length) {
             const that = this,
                 polaroid = document.querySelector('.photoapp__polaroid'),
-                photoAppImg = document.querySelector('.photoapp__img'),
-                hiddenBtn = document.querySelector('.photoapp__hidden'),
-                $window = $(window),
-                square = $window.width() - 50;
-
-            var rotation = 0,
-                blob;
+                $window = $(window);
 
             that.socket = io();
             that.$window = $window;
+            that.$message = $('.photoapp__message');
             that.$polaroid = $('.photoapp__polaroid');
             that.$viewer = $('.photoapp__viewer');
             that.$controls = $('.photoapp__controls');
@@ -28,6 +23,7 @@ export default class Photoapp {
             that.$loader = $('.photoapp__loader');
             that.$percent = that.$loader.find('.percent');
             that.isFlicked = false;
+            that.rotation = 0;
             that.photoAppView;
 
             $('.js-take-photo').on('click', function () {
@@ -44,6 +40,8 @@ export default class Photoapp {
                 if (e.angle < 0) {
                     toaster('Uploading image');
 
+                    that.$message.text('');
+                    that.$viewer.removeClass('-preview');
                     that.$window.off('devicemotion');
                     that.isFlicked = true;
                     that.flickPhoto();
@@ -51,9 +49,14 @@ export default class Photoapp {
             });
 
             $('.js-open-photo').on('change', function (e) {
-                var tgt = e.target || window.event.srcElement,
-                    files = tgt.files;
+                const $this = $(this),
+                    tgt = e.target || window.event.srcElement,
+                    photoAppImg = document.querySelector('.photoapp__img'),
+                    hiddenBtn = document.querySelector('.photoapp__hidden'),
+                    files = tgt.files,
+                    square = $window.width() - 50;
 
+                that.$message.text('crop and rotate');
                 that.$controls.removeClass('-disabled');
                 that.$camera.addClass('-hide');
 
@@ -90,19 +93,19 @@ export default class Photoapp {
                             that.getOrientation(hiddenBtn.files[0], function (orientation) {
                                 switch (orientation) {
                                     case 8:
-                                        rotation = -90;
+                                        that.rotation = -90;
                                         break;
                                     case 3:
-                                        rotation = 180;
+                                        that.rotation = 180;
                                         break;
                                     case 6:
-                                        rotation = 90;
+                                        that.rotation = 90;
                                         break;
                                 }
                             });
 
                             setTimeout(function () {
-                                that.photoAppView.rotate(rotation);
+                                that.photoAppView.rotate(that.rotation);
                             }, 50);
                         };
                     };
@@ -114,18 +117,35 @@ export default class Photoapp {
                 }
             });
 
-            $('.js-rotate-photo').on('click', function () {
+            $('.js-rotate-photo').on('click', function (e) {
+                const $this = $(this);
+
+                if ($this.parent().hasClass('-preview')) {
+                    return false;
+                };
+
                 that.photoAppView.rotate(-90);
             });
 
-            $('.js-delete-photo').on('click', function () {
+            $('.js-delete-photo').on('click', function (e) {
+                const $this = $(this);
+
                 if ($('.croppie-container').length) {
                     that.reset();
-                }
+                };
             });
 
-            $('.js-crop-photo').on('click', function () {
+            $('.js-crop-photo').on('click', function (e) {
+                const $this = $(this);
+
+                if ($this.parent().hasClass('-preview')) {
+                    return false;
+                };
+
+                that.$message.text('are you happy with your photo?');
                 that.$polaroid.removeClass('-hide');
+                that.$controls.addClass('-preview');
+                that.$viewer.addClass('-preview');
 
                 that.photoAppView.result({
                     type: 'base64',
@@ -279,8 +299,9 @@ export default class Photoapp {
 
         that.isFlicked = false;
         that.photoAppView.destroy();
-        that.$viewer.removeClass('-disabled');
-        that.$controls.addClass('-disabled');
+        that.$message.text('tap to snap a photo');
+        that.$viewer.removeClass('-disabled -preview');
+        that.$controls.addClass('-disabled').removeClass('-preview');
         that.$camera.removeClass('-hide');
         that.$loader.addClass('-hide');
         that.$polaroid.addClass('-hide').removeClass('-throw');

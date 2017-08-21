@@ -160,7 +160,7 @@ $.fn.materialize = function () {
 
 $(() => {
     // Ripple Effect
-    let $rippleEffect = $('button, .cta');
+    let $rippleEffect = $('button, .cta, .-btn');
 
     $rippleEffect.on('click', function (e) {
         let $this = $(this);
@@ -302,7 +302,7 @@ let toaster = function (msg = "Toaster message", ttl = 5) {
 ///////////////////
 let inc = 0;
 let ripple = function (e, el) {
-    if ($('.no-svg').length || el.find('svg').length) {
+    if ($('.no-svg').length) {
         return false;
     }
 

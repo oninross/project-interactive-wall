@@ -50,7 +50,7 @@ Layout
     position: relative;
 }
 
-.cta {
+.cta, .-btn {
     @include transition(all, $animTime, $easeOutExpo);
 
     background: $black;

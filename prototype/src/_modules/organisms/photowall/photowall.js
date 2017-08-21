@@ -40,7 +40,7 @@ export default class Photowall {
                     ease: Expo.easeInOut,
                     delay: 10,
                     onComplete: function() {
-                        $('.-polaroid' + polaroidInd).remove();
+                        $polaroid.remove();
                     }
                 });
             });
