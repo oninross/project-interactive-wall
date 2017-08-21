@@ -22,7 +22,6 @@ app.use(function (req, res, next) {
     }
 });
 
-app.use('/', router);
 app.use(express.static(__dirname + '/client'));
 
 router.get('/', function (req, res) {
@@ -44,6 +43,8 @@ router.get('/photo', function (req, res) {
 
     res.sendFile(__dirname + '/client/photo/index.html');
 });
+
+app.use('/', router);
 
 io.on('connection', function (socket) {
     console.log('\x1b[32m', 'a user connected');
