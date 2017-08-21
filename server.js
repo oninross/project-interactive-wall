@@ -5,6 +5,7 @@ var express = require('express'),
     https = require('https'),
     io = require('socket.io')(http),
     device = require('express-device'),
+    ssl = require('express-ssl'),
     router = express.Router();
 
 app.use(ssl());
