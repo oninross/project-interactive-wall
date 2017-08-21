@@ -17,6 +17,7 @@ export default class Photoapp {
 
             that.socket = io();
             that.$window = $window;
+            that.$message = $('.photoapp__message');
             that.$polaroid = $('.photoapp__polaroid');
             that.$viewer = $('.photoapp__viewer');
             that.$controls = $('.photoapp__controls');
@@ -41,6 +42,7 @@ export default class Photoapp {
                 if (e.angle < 0) {
                     toaster('Uploading image');
 
+                    that.$message.text('');
                     that.$viewer.removeClass('-preview');
                     that.$window.off('devicemotion');
                     that.isFlicked = true;
@@ -56,6 +58,7 @@ export default class Photoapp {
                     files = tgt.files,
                     square = $window.width() - 50;
 
+                that.$message.text('crop and rotate');
                 that.$controls.removeClass('-disabled');
                 that.$camera.addClass('-hide');
 
@@ -141,6 +144,7 @@ export default class Photoapp {
                     return false;
                 };
 
+                that.$message.text('are you happy with your photo?');
                 that.$polaroid.removeClass('-hide');
                 that.$controls.addClass('-preview');
                 that.$viewer.addClass('-preview');
@@ -297,7 +301,8 @@ export default class Photoapp {
 
         that.isFlicked = false;
         that.photoAppView.destroy();
-        that.$viewer.removeClass('-disabled');
+        that.$message.text('tap to take a photo');
+        that.$viewer.removeClass('-disabled -preview');
         that.$controls.addClass('-disabled').removeClass('-preview');
         that.$camera.removeClass('-hide');
         that.$loader.addClass('-hide');

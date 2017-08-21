@@ -276,6 +276,20 @@ background: #ccc;
     overflow: hidden;
     position: relative;
 
+    &__message {
+        color: $white;
+        font-weight: $thin;
+        font-size: 4em;
+        line-height: 1.25;
+        padding: 0 20px;
+        position: absolute;
+        top: 25px;
+        text-align: center;
+        text-shadow: 0 1px 8px $black;
+        width: 100%;
+        z-index: 10;
+    }
+
     &__loader {
         @include transition(transform, $animTime, $easeInOutExpo);
 
@@ -347,11 +361,12 @@ background: #ccc;
     }
 
     &__viewer {
-        @include transition(filter, $animTime, $easeInOutExpo);
+        @include transition((filter, transform), $animTime, $easeInOutExpo);
 
         filter: blur(0);
         height: 100%;
         position: relative;
+        transform: scale(1);
         z-index: 1;
 
         &:before {
@@ -369,6 +384,7 @@ background: #ccc;
 
         &.-preview {
             filter: blur(15px);
+            transform: scale(1.25);
         }
 
         &.-disabled {
