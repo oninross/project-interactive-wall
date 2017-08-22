@@ -1,8 +1,6 @@
 var express = require('express'),
     app = express(),
-    fs = require('fs'),
     http = require('http').Server(app),
-    https = require('https'),
     io = require('socket.io')(http),
     device = require('express-device'),
     ssl = require('express-ssl'),
