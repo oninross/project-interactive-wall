@@ -58,7 +58,6 @@ export default class Photoapp {
                     square = $window.width() - 50;
 
                 that.$message.text('crop and rotate');
-                that.$controls.removeClass('-disabled');
                 that.$camera.addClass('-hide');
 
                 $('body').animate({
@@ -99,8 +98,11 @@ export default class Photoapp {
                         //         if (that.getLikelihood(data.responses[0].safeSearchAnnotation.adult) > 3 || that.getLikelihood(data.responses[0].safeSearchAnnotation.violence) > 3) {
                         //             // Inappropriate Images
                         //             that.$message.text('sorry! you are not allowed to do that!');
+
                         //             that.$controls.addClass('-preview');
                         //             that.$viewer.addClass('-preview');
+                        //         } else {
+                        //             that.$controls.removeClass('-disabled');
                         //         }
                         //     },
                         //     error: function (err) {
