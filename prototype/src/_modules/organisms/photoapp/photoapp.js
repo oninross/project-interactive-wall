@@ -107,7 +107,7 @@ export default class Photoapp {
                                     }
                                 },
                                 error: function (err) {
-                                    console.log(err);
+                                    console.log(err.responseText);
                                 }
                             });
                         }
