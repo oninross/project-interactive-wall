@@ -2,7 +2,7 @@
 
 import firebase from 'firebase';
 import Croppie from '../../../../node_modules/croppie/croppie';
-import { ripple, toaster } from '../../../_assets/interactive-wall/js/_material';
+import { toaster } from '../../../_assets/interactive-wall/js/_material';
 import { iOS } from '../../../_assets/interactive-wall/js/_helper';
 import Hammer from '../../../../node_modules/hammerjs/hammer.min';
 
@@ -11,8 +11,8 @@ export default class Photoapp {
         if ($('.photoapp').length) {
             const that = this,
                 polaroid = document.querySelector('.photoapp__polaroid'),
-                $window = $(window)
-                API_KEY = 'API_KEY';
+                $window = $(window),
+                API_KEY = 'AIzaSyAzhfbEZEV5GaMHVjQvLgQB7g6noJvIYMY';
 
             that.socket = io();
             that.$window = $window;
@@ -72,43 +72,45 @@ export default class Photoapp {
                     var fr = new FileReader();
 
                     fr.onload = function (e) {
-                        var json = {
-                            'requests': [
-                                {
-                                    'image': {
-                                        'content': fr.result.replace('data:image/jpeg;base64,', '')
-                                    },
-                                    'features': [
-                                        {
-                                            'type': 'SAFE_SEARCH_DETECTION',
-                                            'maxResults': 200
-                                        }
-                                    ]
+                        if (window.location.hostname !== 'localhost') {
+                            var json = {
+                                'requests': [
+                                    {
+                                        'image': {
+                                            'content': fr.result.replace('data:image/jpeg;base64,', '')
+                                        },
+                                        'features': [
+                                            {
+                                                'type': 'SAFE_SEARCH_DETECTION',
+                                                'maxResults': 200
+                                            }
+                                        ]
+                                    }
+                                ]
+                            };
+
+                            $.ajax({
+                                type: 'POST',
+                                url: 'https://vision.googleapis.com/v1/images:annotate?key=' + API_KEY,
+                                dataType: 'json',
+                                data: JSON.stringify(json),
+                                contentType: 'application/json',
+                                success: function (data) {
+                                    if (that.getLikelihood(data.responses[0].safeSearchAnnotation.adult) > 3 || that.getLikelihood(data.responses[0].safeSearchAnnotation.violence) > 3) {
+                                        // Inappropriate Images
+                                        that.$message.text('sorry! you are not allowed to do that!');
+
+                                        that.$controls.addClass('-preview');
+                                        that.$viewer.addClass('-preview');
+                                    } else {
+                                        that.$controls.removeClass('-disabled');
+                                    }
+                                },
+                                error: function (err) {
+                                    console.log('ERRORS: ' + err);
                                 }
-                            ]
-                        };
-
-                        // $.ajax({
-                        //     type: 'POST',
-                        //     url: 'https://vision.googleapis.com/v1/images:annotate?key=' + API_KEY,
-                        //     dataType: 'json',
-                        //     data: JSON.stringify(json),
-                        //     contentType: 'application/json',
-                        //     success: function (data) {
-                        //         if (that.getLikelihood(data.responses[0].safeSearchAnnotation.adult) > 3 || that.getLikelihood(data.responses[0].safeSearchAnnotation.violence) > 3) {
-                        //             // Inappropriate Images
-                        //             that.$message.text('sorry! you are not allowed to do that!');
-
-                        //             that.$controls.addClass('-preview');
-                        //             that.$viewer.addClass('-preview');
-                        //         } else {
-                        //             that.$controls.removeClass('-disabled');
-                        //         }
-                        //     },
-                        //     error: function (err) {
-                        //         console.log('ERRORS: ' + err);
-                        //     }
-                        // });
+                            });
+                        }
 
                         photoAppImg.src = fr.result;
 

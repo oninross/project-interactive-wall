@@ -160,7 +160,7 @@ $.fn.materialize = function () {
 
 $(() => {
     // Ripple Effect
-    let $rippleEffect = $('button, .cta, .-btn');
+    let $rippleEffect = $('button, .cta');
 
     $rippleEffect.on('click', function (e) {
         let $this = $(this);

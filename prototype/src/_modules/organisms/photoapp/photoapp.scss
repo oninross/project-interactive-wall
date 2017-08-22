@@ -291,7 +291,7 @@ background: #ccc;
     }
 
     &__loader {
-        @include transition(transform, $animTime, $easeInOutExpo);
+        @include transition(transform, $animTime, $easeOutExpo);
 
         @include absolute-center;
 
@@ -326,7 +326,7 @@ background: #ccc;
     }
 
     &__polaroid {
-        @include transition((opacity, transform), $animTime, $easeInOutExpo);
+        @include transition((opacity, transform), $animTime, $easeOutExpo);
 
         @include absolute-center;
 
@@ -339,6 +339,13 @@ background: #ccc;
 
         img {
             margin-bottom: 0;
+        }
+
+        .-btn {
+            margin: 0;
+            position: absolute;
+            right: -45px;
+            top: -45px;
         }
 
         &.-hide {
@@ -361,7 +368,7 @@ background: #ccc;
     }
 
     &__viewer {
-        @include transition((filter, transform), $animTime, $easeInOutExpo);
+        @include transition((filter, transform), $animTime, $easeOutExpo);
 
         filter: blur(0);
         height: 100%;
@@ -370,7 +377,7 @@ background: #ccc;
         z-index: 1;
 
         &:before {
-            @include transition(height, $animTime, $easeInOutExpo);
+            @include transition(height, $animTime, $easeOutExpo);
 
             background-color: #000;
             content: '';
@@ -429,7 +436,7 @@ background: #ccc;
         border-radius: 50%;
         height: 50px;
         margin: 20px;
-        overflow: hidden;
+        padding: 0;
         position: relative;
         transform: translateY(0);
         width: 50px;
@@ -452,7 +459,7 @@ background: #ccc;
         }
 
         &.-camera {
-            @include transition(transform, $animTime, $easeInOutExpo);
+            @include transition(transform, $animTime, $easeOutExpo);
 
             @include absolute-center;
 
