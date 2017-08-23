@@ -1,7 +1,7 @@
 {
     "lang": "en",
-    "name": "Interactive Wall",
-    "short_name": "Interactive Wall",
+    "name": "Taste of Braddon",
+    "short_name": "Taste of Braddon",
     "description": "",
     "start_url": "./photo/index.html",
     "display": "standalone",
