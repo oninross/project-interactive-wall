@@ -143,7 +143,7 @@ export default class Photoapp {
                     return false;
                 };
 
-                that.$message.text('are you happy with your photo?');
+                that.$message.text('flick your image when you are done');
                 that.$polaroid.removeClass('-hide');
                 that.$controls.addClass('-preview');
                 that.$viewer.addClass('-preview');

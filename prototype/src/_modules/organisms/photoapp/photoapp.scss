@@ -363,6 +363,7 @@ background: #ccc;
             @include transition(none, 0s, linear);
 
             bottom: auto;
+            position: fixed;
             right: auto;
             transform: translateX(36vw) translateY(-65vh) rotate(0);
         }
