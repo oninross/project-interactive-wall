@@ -11,8 +11,7 @@ export default class Photoapp {
         if ($('.photoapp').length) {
             const that = this,
                 polaroid = document.querySelector('.photoapp__polaroid'),
-                $window = $(window),
-                API_KEY = 'AIzaSyAzhfbEZEV5GaMHVjQvLgQB7g6noJvIYMY';
+                $window = $(window);
 
             that.socket = io();
             that.$window = $window;
@@ -91,7 +90,7 @@ export default class Photoapp {
 
                             $.ajax({
                                 type: 'POST',
-                                url: 'https://vision.googleapis.com/v1/images:annotate?key=' + API_KEY,
+                                url: 'https://vision.googleapis.com/v1/images:annotate?key=' + config.apiKey,
                                 dataType: 'json',
                                 data: JSON.stringify(json),
                                 contentType: 'application/json',
