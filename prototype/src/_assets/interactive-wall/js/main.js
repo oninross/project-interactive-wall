@@ -37,14 +37,23 @@ let $window = $(window),
 
 $(() => {
     // Initialize Firebase
+    // const config = {
+    //     apiKey: "AIzaSyAzhfbEZEV5GaMHVjQvLgQB7g6noJvIYMY",
+    //     authDomain: "project-interactive-wall.firebaseapp.com",
+    //     databaseURL: "https://project-interactive-wall.firebaseio.com",
+    //     projectId: "project-interactive-wall",
+    //     storageBucket: "project-interactive-wall.appspot.com",
+    //     messagingSenderId: "602975578099"
+    // };
+
     const config = {
-        apiKey: "AIzaSyAzhfbEZEV5GaMHVjQvLgQB7g6noJvIYMY",
-        authDomain: "project-interactive-wall.firebaseapp.com",
-        databaseURL: "https://project-interactive-wall.firebaseio.com",
-        projectId: "project-interactive-wall",
-        storageBucket: "project-interactive-wall.appspot.com",
-        messagingSenderId: "602975578099"
-    };
+        apiKey: "AIzaSyBaK7_dXW7zELi_TvXcplzWEwD3bYsRwrE",
+        authDomain: "tasteofbraddon.firebaseapp.com",
+        databaseURL: "https://tasteofbraddon.firebaseio.com",
+        projectId: "tasteofbraddon",
+        storageBucket: "tasteofbraddon.appspot.com",
+        messagingSenderId: "1032680936076"
+      };
 
     firebase.initializeApp(config);
 
