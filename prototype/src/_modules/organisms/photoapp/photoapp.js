@@ -109,7 +109,9 @@ export default class Photoapp {
                                 error: function (err) {
                                     console.log(err);
                                     console.log(err.responseText);
-                                    that.$controls.removeClass('-disabled');
+                                    if (err.code == 403) {
+                                        that.$controls.removeClass('-disabled');
+                                    }
                                 }
                             });
                         }
