@@ -71,45 +71,7 @@ export default class Photoapp {
                     var fr = new FileReader();
 
                     fr.onload = function (e) {
-                        if (window.location.hostname !== 'localhost') {
-                            var json = {
-                                'requests': [
-                                    {
-                                        'image': {
-                                            'content': fr.result.replace('data:image/jpeg;base64,', '')
-                                        },
-                                        'features': [
-                                            {
-                                                'type': 'SAFE_SEARCH_DETECTION',
-                                                'maxResults': 200
-                                            }
-                                        ]
-                                    }
-                                ]
-                            };
-
-                            $.ajax({
-                                type: 'POST',
-                                url: 'https://vision.googleapis.com/v1/images:annotate?key=' + config.apiKey,
-                                dataType: 'json',
-                                data: JSON.stringify(json),
-                                contentType: 'application/json',
-                                success: function (data) {
-                                    if (that.getLikelihood(data.responses[0].safeSearchAnnotation.adult) > 3 || that.getLikelihood(data.responses[0].safeSearchAnnotation.violence) > 3) {
-                                        // Inappropriate Images
-                                        that.$message.text('sorry! you are not allowed to do that!');
-
-                                        that.$controls.addClass('-preview');
-                                        that.$viewer.addClass('-preview');
-                                    } else {
-                                        that.$controls.removeClass('-disabled');
-                                    }
-                                },
-                                error: function (err) {
-                                    console.log(err.responseText);
-                                }
-                            });
-                        }
+                        that.$controls.removeClass('-disabled');
 
                         photoAppImg.src = fr.result;
 
@@ -181,7 +143,7 @@ export default class Photoapp {
                     return false;
                 };
 
-                that.$message.text('are you happy with your photo?');
+                that.$message.text('flick your image when you are done');
                 that.$polaroid.removeClass('-hide');
                 that.$controls.addClass('-preview');
                 that.$viewer.addClass('-preview');

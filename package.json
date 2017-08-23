@@ -1,11 +1,11 @@
 {
   "name": "project-interactive-wall",
   "description": "",
-  "version": "0.0.3",
+  "version": "0.0.12",
   "private": true,
   "dependencies": {
     "express": "4.15.4",
-    "express-device": "^0.4.2",
+    "express-device": "0.4.2",
     "socket.io": "2.0.3",
     "web-push": "3.2.2"
   },

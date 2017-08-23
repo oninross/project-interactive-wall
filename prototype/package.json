@@ -1,6 +1,6 @@
 {
   "name": "interactive-wall",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "dependencies": {
     "browserify-shim": "^3.8.12",
     "croppie": "^2.5.0",
