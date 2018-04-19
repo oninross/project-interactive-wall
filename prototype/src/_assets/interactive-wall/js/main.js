@@ -42,9 +42,9 @@ $(() => {
         authDomain: "friendly-ward-201603.firebaseapp.com",
         databaseURL: "https://friendly-ward-201603.firebaseio.com",
         projectId: "friendly-ward-201603",
-        storageBucket: "",
+        storageBucket: "friendly-ward-201603.appspot.com",
         messagingSenderId: "585007981075"
-      };;
+      };
 
     firebase.initializeApp(config);
 
