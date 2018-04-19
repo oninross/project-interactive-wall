@@ -38,13 +38,13 @@ let $window = $(window),
 $(() => {
     // Initialize Firebase
     const config = {
-        apiKey: "AIzaSyAzhfbEZEV5GaMHVjQvLgQB7g6noJvIYMY",
-        authDomain: "project-interactive-wall.firebaseapp.com",
-        databaseURL: "https://project-interactive-wall.firebaseio.com",
-        projectId: "project-interactive-wall",
-        storageBucket: "project-interactive-wall.appspot.com",
-        messagingSenderId: "602975578099"
-    };
+        apiKey: "AIzaSyAJ9fjJLfKeFtq98AxXD6p0Wmh3NSLJfxw",
+        authDomain: "friendly-ward-201603.firebaseapp.com",
+        databaseURL: "https://friendly-ward-201603.firebaseio.com",
+        projectId: "friendly-ward-201603",
+        storageBucket: "",
+        messagingSenderId: "585007981075"
+      };;
 
     firebase.initializeApp(config);
 
