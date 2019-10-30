@@ -6,7 +6,7 @@ var express = require('express'),
     ssl = require('express-ssl'),
     router = express.Router();
 
-app.use(ssl());
+// app.use(ssl());
 app.use(device.capture());
 
 app.use(function (req, res, next) {
