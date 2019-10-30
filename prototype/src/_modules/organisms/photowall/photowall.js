@@ -52,7 +52,7 @@ export default class Photowall {
 
       fbDB.ref('image/').on("child_added", function (snapshot) {
         var v = snapshot.val(),
-          $items = $('<li><img src="' + v.src + '"/></li>');
+          $items = $('<li style="background-image: url(' + v.src + ')"></li>');
 
         $photoWall.prepend($items).masonry('prepended', $items).imagesLoaded().done(function (instance) {
           $photoWall.masonry({

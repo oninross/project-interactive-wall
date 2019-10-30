@@ -11,14 +11,6 @@ import 'AttrPlugin';
 import 'CSSPlugin';
 import 'doT';
 import * as firebase from 'firebase/app';
-import './_modernizr';
-
-// for testing a11y only.  Remove before integration
-// import './tota11y.min';
-
-
-import { } from './_helper';
-import { toaster } from './_material';
 
 import Photowall from '../../../_modules/organisms/photowall/photowall';
 import Photoapp from '../../../_modules/organisms/photoapp/photoapp';

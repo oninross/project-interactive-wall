@@ -1,7 +1,6 @@
 'use strict';
 
 import firebase from 'firebase';
-import Croppie from '../../../../node_modules/croppie/croppie';
 import { toaster } from '../../../_assets/interactive-wall/js/_material';
 import { iOS } from '../../../_assets/interactive-wall/js/_helper';
 import Hammer from '../../../../node_modules/hammerjs/hammer.min';
@@ -9,25 +8,54 @@ import Hammer from '../../../../node_modules/hammerjs/hammer.min';
 export default class Photoapp {
   constructor() {
     if ($('.photoapp').length) {
-      const that = this,
-        polaroid = document.querySelector('.photoapp__polaroid'),
-        $window = $(window);
+      const that = this;
+      const pixelRatio = window.devicePixelRatio || 1;
 
       that.socket = io();
-      that.$window = $window;
+      that.$window = $(window);
       that.$message = $('.photoapp__message');
       that.$polaroid = $('.photoapp__polaroid');
       that.$viewer = $('.photoapp__viewer');
-      that.$controls = $('.photoapp__controls');
       that.$camera = $('.photoapp__btn.-camera');
       that.$loader = $('.photoapp__loader');
       that.$percent = that.$loader.find('.percent');
       that.isFlicked = false;
       that.rotation = 0;
-      that.photoAppView;
+      that.base64;
+
+      this.CANVAS = document.createElement('canvas');
+      this.CONTEXT = this.CANVAS.getContext('2d');
+      this.CONTEXT.scale(pixelRatio, pixelRatio);
+      this.VIDEO = document.getElementById('video');
+      this.VIDEO.setAttribute('playsinline', '');
+      this.VIDEO.setAttribute('muted', '');
+
+      this.IMAGE = document.createElement('img');
+      this.IMAGE.setAttribute('id', 'image');
+      document.body.appendChild(this.IMAGE);
 
       $('.js-take-photo').on('click', function () {
-        $('.js-open-photo').trigger('click');
+        that.CONTEXT.drawImage(that.VIDEO, 0, 0, that.VIDEO.width, that.VIDEO.height);
+
+        let imgDataURL = that.CANVAS.toDataURL('image/png');
+
+        that.$camera.addClass('-hide');
+        that.$polaroid.removeClass('-hide').css({
+          'background-image': `url(${imgDataURL})`
+        });
+
+        that.IMAGE.onload = () => {
+          that.base64 = imgDataURL;
+        };
+
+        that.IMAGE.src = imgDataURL;
+      });
+
+      $('.js-delete-photo').on('click', function (e) {
+        e.preventDefault();
+
+        that.$polaroid.addClass('-hide');
+        that.$camera.removeClass('-hide');
       });
 
       var hammertime = new Hammer(polaroid);
@@ -48,121 +76,42 @@ export default class Photoapp {
         }
       });
 
-      $('.js-open-photo').on('change', function (e) {
-        const $this = $(this),
-          tgt = e.target || window.event.srcElement,
-          photoAppImg = document.querySelector('.photoapp__img'),
-          hiddenBtn = document.querySelector('.photoapp__hidden'),
-          files = tgt.files,
-          square = $window.width() - 50;
-
-        that.$message.text('crop and rotate');
-        that.$camera.addClass('-hide');
-
-        $('body').animate({
-          scrollTop: $(document).height(),
-        }, {
-          duration: 500,
-          easing: 'easeOutExpo'
-        });
-
-        // FileReader support
-        if (FileReader && files && files.length) {
-          var fr = new FileReader();
-
-          fr.onload = function (e) {
-            that.$controls.removeClass('-disabled');
-
-            photoAppImg.src = fr.result;
-
-            photoAppImg.onload = function () {
-              if ($('.croppie-container').length) {
-                that.photoAppView.bind({
-                  url: photoAppImg.src
-                });
-              } else {
-                that.photoAppView = new Croppie(photoAppImg, {
-                  enableOrientation: true,
-                  viewport: {
-                    height: square,
-                    width: square
-                  },
-                  showZoomer: false
-                });
-              }
-
-              that.getOrientation(hiddenBtn.files[0], function (orientation) {
-                switch (orientation) {
-                  case 8:
-                    that.rotation = -90;
-                    break;
-                  case 3:
-                    that.rotation = 180;
-                    break;
-                  case 6:
-                    that.rotation = 90;
-                    break;
-                }
-              });
-
-              setTimeout(function () {
-                that.photoAppView.rotate(that.rotation);
-              }, 50);
-            };
-          };
-
-          fr.readAsDataURL(files[0]);
-        } else {
-          // fallback -- perhaps submit the input to an iframe and temporarily store
-          // them on the server until the user's session ends.
-        }
-      });
-
-      $('.js-rotate-photo').on('click', function (e) {
-        const $this = $(this);
-
-        if ($this.parent().hasClass('-preview')) {
-          return false;
-        };
-
-        that.photoAppView.rotate(-90);
-      });
-
-      $('.js-delete-photo').on('click', function (e) {
-        const $this = $(this);
-
-        if ($('.croppie-container').length) {
-          that.reset();
-        };
-      });
-
-      $('.js-crop-photo').on('click', function (e) {
-        const $this = $(this);
-
-        if ($this.parent().hasClass('-preview')) {
-          return false;
-        };
-
-        that.$message.text('flick your image when you are done');
-        that.$polaroid.removeClass('-hide');
-        that.$controls.addClass('-preview');
-        that.$viewer.addClass('-preview');
-
-        that.photoAppView.result({
-          type: 'base64',
-          size: {
-            width: 500,
-            height: 500
-          }
-        }).then(function (base64) {
-          that.$polaroid.find('img').attr('src', base64);
-        });
-
-        that.$window.on('devicemotion', function (e) {
-          that.deviceMotion(e, that)
-        });
-      });
+      this.initCamera();
     }
+  }
+
+  async initCamera() {
+    const that = this;
+
+    return new Promise((resolve, reject) => {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices
+          .getUserMedia({
+            video: {
+              facingMode: 'environment'
+            },
+            audio: false
+          })
+          .then(stream => {
+            that.VIDEO.srcObject = stream;
+            that.VIDEO.addEventListener('loadeddata', async () => {
+              that.VIDEO.width = that.VIDEO.videoWidth;
+              that.VIDEO.height = that.VIDEO.videoHeight;
+
+              that.CANVAS.width = that.VIDEO.videoWidth;
+              that.CANVAS.height = that.VIDEO.videoHeight;
+
+              resolve();
+            }, false);
+          })
+          .catch(error => {
+            console.error(error);
+            that.MESSAGE.textContent = 'I need a camera to identify the hotdog';
+          });
+      } else {
+        reject();
+      }
+    });
   }
 
   getLikelihood(likelihood) {
@@ -205,68 +154,43 @@ export default class Photoapp {
       fbDB = firebase.database(),
       storage = firebase.storage(),
       fbDBref = fbDB.ref(),
-      storageRef = storage.ref();
+      storageRef = storage.ref(),
+      date = new Date();
 
     var progress = 0,
       newPostRef,
-      url,
-      date,
-      name,
-      task,
-      f;
+      task;
 
     that.$window.off('devicemotion');
     that.$loader.removeClass('-hide');
     that.$viewer.addClass('-disabled');
-    that.$controls.addClass('-disabled');
     that.$polaroid.addClass('-throw');
 
-    that.photoAppView.result({
-      type: 'base64',
-      size: {
-        width: 500,
-        height: 500
-      }
-    }).then(function (base64) {
-      that.socket.emit('photo flick', base64);
-    });
+    var blob = that.b64toBlob(that.base64);
+    task = storageRef.child(`/${date.getTime()}.jpg`).put(blob);
 
-    date = new Date();
+    task.on('state_changed', function (snapshot) {
+      // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+      progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+      console.log('Upload is ' + progress + '% done');
+      that.$percent.text(progress + '%');
+    }, function (error) {
+      toaster("Unable to save image. -_-");
+      toaster(JSON.stringify(error));
+      that.$viewer.addClass('-disabled');
+      that.$loader.addClass('-hide');
+    }, function () {
+      task.snapshot.ref.getDownloadURL().then(function (url) {
+        newPostRef = fbDBref.child('image/');
+        newPostRef.push({
+          "src": url
+        }).then(function () {
+          toaster('Upload successful! ^_^');
 
-    that.photoAppView.result({
-      type: 'blob',
-      size: {
-        width: 500,
-        height: 500
-      }
-    }).then(function (blob) {
-      task = storageRef.child(`/${date.getTime()}.jpg`).put(blob);
-
-      task.on('state_changed', function (snapshot) {
-        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-        progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-        console.log('Upload is ' + progress + '% done');
-        that.$percent.text(progress + '%');
-      }, function (error) {
-        toaster("Unable to save image. -_-");
-        toaster(JSON.stringify(error));
-        that.$viewer.addClass('-disabled');
-        that.$controls.removeClass('-disabled');
-        that.$loader.addClass('-hide');
-      }, function () {
-        task.snapshot.ref.getDownloadURL().then(function (url) {
-          newPostRef = fbDBref.child('image/');
-          newPostRef.push({
-            "src": url
-          }).then(function () {
-            toaster('Upload successful! ^_^');
-
-            that.reset();
-          });
-        })
-          .catch(function (error) {
-            console.log(error);
-          });
+          that.reset();
+        });
+      }).catch(function (error) {
+        console.log(error);
       });
     });
   }
@@ -323,14 +247,24 @@ export default class Photoapp {
     const that = this;
 
     that.isFlicked = false;
-    that.photoAppView.destroy();
     that.$message.text('tap to snap a photo');
     that.$viewer.removeClass('-disabled -preview');
-    that.$controls.addClass('-disabled').removeClass('-preview');
-    that.$camera.removeClass('-hide');
+    that.$camera.removeClass('-hide').blur();
     that.$loader.addClass('-hide');
     that.$polaroid.addClass('-hide').removeClass('-throw');
     that.$percent.text('0%');
     $('.photoapp__img').unwrap().attr('src', '');
+  }
+
+  b64toBlob(dataURI) {
+    var byteString = atob(dataURI.split(',')[1]);
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ab], { type: 'image/jpeg' });
   }
 }

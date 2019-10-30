@@ -6,14 +6,20 @@
     }
 
     li {
+        @extend .backstretch;
+
         float: left;
+        height: 137px;
         width: 33.333333%;
 
         @include tablet {
-            width: 20%
+            height: 154px;
+            width: 20%;
         }
 
+
         @include desktop {
+            height: 117px;
             width: 8.333333%;
         }
     }
