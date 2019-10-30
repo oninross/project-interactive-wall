@@ -171,6 +171,8 @@ export default class Photoapp {
     that.$viewer.addClass('-disabled');
     that.$polaroid.addClass('-throw');
 
+    that.socket.emit('photo flick', that.base64);
+
     var blob = that.b64toBlob(that.base64);
     task = storageRef.child(`/${date.getTime()}.jpg`).put(blob);
 
