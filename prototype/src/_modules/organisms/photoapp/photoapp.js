@@ -10,6 +10,7 @@ export default class Photoapp {
     if ($('.photoapp').length) {
       const that = this;
       const pixelRatio = window.devicePixelRatio || 1;
+      const polaroid = document.querySelector('.photoapp__polaroid');
 
       that.socket = io();
       that.$window = $(window);
