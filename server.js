@@ -35,21 +35,12 @@ router.get('/', function (req, res) {
 router.get('/photo', function (req, res) {
   console.log('\x1b[35m', req.device.type);
 
-<<<<<<< HEAD
-  if (req.device.type != 'phone') {
-    res.redirect('/');
-    // res.sendFile(__dirname + '/client/index.html');
-  } else {
-    res.sendFile(__dirname + '/client/photo/index.html');
-  }
-=======
   if (req.device.type != 'phone') {
     // res.redirect('/');
     res.sendFile(__dirname + '/client/index.html');
   } else {
     res.sendFile(__dirname + '/client/photo/index.html');
   }
->>>>>>> release/v0.0.14
 });
 
 io.on('connection', function (socket) {
