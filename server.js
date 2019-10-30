@@ -1,64 +1,71 @@
 var express = require('express'),
-    app = express(),
-    http = require('http').Server(app),
-    io = require('socket.io')(http),
-    device = require('express-device'),
-    ssl = require('express-ssl'),
-    router = express.Router();
+  app = express(),
+  http = require('http').Server(app),
+  io = require('socket.io')(http),
+  device = require('express-device'),
+  router = express.Router();
 
 app.use(ssl());
 app.use(device.capture());
 
 app.use(function (req, res, next) {
-    if (req.secure) {
-        // request was via https, so do no special handling
-        next();
-    } else {
-        // request was via http, so redirect to https
-        res.redirect('https://' + req.headers.host + req.url);
-    }
+  if (req.secure) {
+    // request was via https, so do no special handling
+    next();
+  } else {
+    // request was via http, so redirect to https
+    res.redirect('https://' + req.headers.host + req.url);
+  }
 });
 
 app.use(router);
 app.use(express.static(__dirname + '/client'));
 
 router.get('/', function (req, res) {
-    console.log('\x1b[35m', req.device.type);
+  console.log('\x1b[35m', req.device.type);
 
-    if (req.device.type == 'phone') {
-        res.redirect('/photo');
-        // res.sendFile(__dirname + '/client/photo/index.html');
-    } else {
-        res.sendFile(__dirname + '/client/index.html');
-    }
-
+  if (req.device.type == 'phone') {
+    // res.redirect('/photo');
+    res.sendFile(__dirname + '/client/photo/index.html');
+  } else {
+    res.sendFile(__dirname + '/client/index.html');
+  }
 });
 
 router.get('/photo', function (req, res) {
-    console.log('\x1b[35m', req.device.type);
+  console.log('\x1b[35m', req.device.type);
 
-    if (req.device.type != 'phone') {
-        res.redirect('/');
-        // res.sendFile(__dirname + '/client/index.html');
-    } else {
-        res.sendFile(__dirname + '/client/photo/index.html');
-    }
+<<<<<<< HEAD
+  if (req.device.type != 'phone') {
+    res.redirect('/');
+    // res.sendFile(__dirname + '/client/index.html');
+  } else {
+    res.sendFile(__dirname + '/client/photo/index.html');
+  }
+=======
+  if (req.device.type != 'phone') {
+    // res.redirect('/');
+    res.sendFile(__dirname + '/client/index.html');
+  } else {
+    res.sendFile(__dirname + '/client/photo/index.html');
+  }
+>>>>>>> release/v0.0.14
 });
 
 io.on('connection', function (socket) {
-    console.log('\x1b[32m', 'a user connected');
+  console.log('\x1b[32m', 'a user connected');
 
-    socket.on('disconnect', function () {
-        console.log('\x1b[31m', 'user disconnected');
-    });
+  socket.on('disconnect', function () {
+    console.log('\x1b[31m', 'user disconnected');
+  });
 
-    socket.on('photo flick', function (data) {
-        io.emit('photo flick', data);
-    });
+  socket.on('photo flick', function (data) {
+    io.emit('photo flick', data);
+  });
 });
 
 http.listen(process.env.PORT || 8888, function () {
-    console.log('listening on *:8888');
+  console.log('listening on *:8888');
 });
 
 // Reset = "\x1b[0m"
