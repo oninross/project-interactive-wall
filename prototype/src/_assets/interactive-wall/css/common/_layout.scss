@@ -26,6 +26,7 @@ Layout
         height: calc(100vh - 45px);
     }
 
+
     svg {
         width: 100px;
     }
@@ -45,6 +46,7 @@ Layout
 
 .backstretch {
     background-color: $black;
+    background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     position: relative;
@@ -64,12 +66,12 @@ Layout
     width: auto;
 
     &:hover {
-        background: lighten( $black, 10%);
+        background: lighten($black, 10%);
     }
 
     &.disabled {
-        background: lighten( $grey, 30%);
-        color: lighten( $grey, 10%);
+        background: lighten($grey, 30%);
+        color: lighten($grey, 10%);
         cursor: not-allowed;
     }
 

@@ -18,9 +18,17 @@ export default class Photowall {
         polaroid,
         $polaroid;
 
-      socket.on('photo flick', function (data) {
+      $photoWall.masonry({
+        itemSelector: ".photowall li",
+        columnWidth: ".photowall__sample"
+      });
+
+      fbDB.ref('image/').on("child_added", function (snapshot) {
+        var v = snapshot.val(),
+          $items = $('<li style="background-image: url(' + v.src + ')"></li>');
+
         polaroidInd += 1;
-        polaroid = '<div class="photoapp__polaroid -polaroid' + polaroidInd + '"><img src="' + data + '"/></div>';
+        polaroid = '<div class="photoapp__polaroid -polaroid' + polaroidInd + '" style="background-image: url(' + v.src + ');"></div>';
 
         $('.photowall__wrapper').append(polaroid);
 
@@ -43,22 +51,12 @@ export default class Photowall {
             $polaroid.remove();
           }
         });
-      });
-
-      $photoWall.masonry({
-        itemSelector: ".photowall li",
-        columnWidth: ".photowall__sample"
-      });
-
-      fbDB.ref('image/').on("child_added", function (snapshot) {
-        var v = snapshot.val(),
-          $items = $('<li style="background-image: url(' + v.src + ')"></li>');
 
         $photoWall.prepend($items).masonry('prepended', $items).imagesLoaded().done(function (instance) {
           $photoWall.masonry({
             itemSelector: ".photowall li",
             columnWidth: ".photowall__sample"
-          })
+          });
         });
       });
     }
