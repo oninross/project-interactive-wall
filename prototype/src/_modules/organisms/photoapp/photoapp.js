@@ -37,13 +37,14 @@ export default class Photoapp {
 
       $('.js-take-photo').on('click', function () {
         that.CONTEXT.drawImage(that.VIDEO, 0, 0, that.VIDEO.width, that.VIDEO.height);
-
         let imgDataURL = that.CANVAS.toDataURL('image/png');
 
+        $('#video').addClass('-blur');
         that.$camera.addClass('-hide');
         that.$polaroid.removeClass('-hide').css({
           'background-image': `url(${imgDataURL})`
         });
+        that.$message.text('flick your image when you are done');
 
         that.IMAGE.onload = () => {
           that.base64 = imgDataURL;
@@ -55,8 +56,11 @@ export default class Photoapp {
       $('.js-delete-photo').on('click', function (e) {
         e.preventDefault();
 
+        $('#video').removeClass('-blur');
         that.$polaroid.addClass('-hide');
         that.$camera.removeClass('-hide');
+        that.$message.text('tap to snap a photo');
+
       });
 
       var hammertime = new Hammer(polaroid);
@@ -249,12 +253,12 @@ export default class Photoapp {
 
     that.isFlicked = false;
     that.$message.text('tap to snap a photo');
+    $('#video').removeClass('-blur');
     that.$viewer.removeClass('-disabled -preview');
     that.$camera.removeClass('-hide').blur();
     that.$loader.addClass('-hide');
     that.$polaroid.addClass('-hide').removeClass('-throw');
     that.$percent.text('0%');
-    $('.photoapp__img').unwrap().attr('src', '');
   }
 
   b64toBlob(dataURI) {

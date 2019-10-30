@@ -1,5 +1,7 @@
 // photoapp styles
 #video {
+    @include transition((filter, transform), $animTime, $easeOutExpo);
+
     position: fixed;
     top: 50%;
     left: 50%;
@@ -10,6 +12,11 @@
     z-index: -100;
     transform: translateX(-50%) translateY(-50%);
     pointer-events: none;
+
+    &.-blur {
+        filter: blur(15px);
+        transform: scale(1.1) translateX(-50%) translateY(-50%);
+    }
 }
 
 .photoapp {
@@ -110,65 +117,6 @@
             right: auto;
             transform: translateX(36vw) translateY(-65vh) rotate(0);
         }
-    }
-
-    &__viewer {
-        @include transition((filter, transform), $animTime, $easeOutExpo);
-
-        filter: blur(0);
-        height: 100%;
-        position: relative;
-        transform: scale(1);
-        z-index: 1;
-
-        &:before {
-            @include transition(height, $animTime, $easeOutExpo);
-
-            background-color: #000;
-            content: '';
-            display: block;
-            height: 0;
-            opacity: 0.5;
-            position: absolute;
-            width: 100%;
-            z-index: 5;
-        }
-
-        &.-preview {
-            filter: blur(15px);
-            transform: scale(1.25);
-        }
-
-        &.-disabled {
-            &:before {
-                height: 100%;
-            }
-        }
-
-        .croppie-container .cr-viewport {
-            border: 2px solid $yellow;
-        }
-    }
-
-    &__controls {
-        @include transition(transform, $animTime, $easeOutExpo);
-
-        align-items: flex-end;
-        bottom: 0;
-        display: flex;
-        justify-content: center;
-        position: absolute;
-        transform: translateY(0);
-        width: 100%;
-        z-index: 10;
-
-        &.-disabled {
-            transform: translateY(90px);
-        }
-    }
-
-    &__hidden {
-        display: none;
     }
 
     &__btn {
