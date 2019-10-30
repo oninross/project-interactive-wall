@@ -3,7 +3,9 @@ var express = require('express'),
   http = require('http').Server(app),
   io = require('socket.io')(http),
   device = require('express-device'),
+  ssl = require('express-ssl'),
   router = express.Router();
+
 
 app.use(ssl());
 app.use(device.capture());
