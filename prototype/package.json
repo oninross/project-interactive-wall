@@ -1,6 +1,6 @@
 {
   "name": "interactive-wall",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "dependencies": {
     "babel-plugin-async-to-promises": "^1.0.5",
     "browserify-shim": "^3.8.12",
