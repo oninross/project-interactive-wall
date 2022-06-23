@@ -4,7 +4,7 @@
   "dependencies": {
     "babel-plugin-async-to-promises": "^1.0.5",
     "browserify-shim": "^3.8.12",
-    "dot": "^1.1.2",
+    "dot": "^1.1.3",
     "firebase": "^7.2.2",
     "gsap": "^1.19.1",
     "hammerjs": "^2.0.8",
