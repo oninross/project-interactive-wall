@@ -29,7 +29,7 @@
     "envify": "~4.0.0",
     "foldero": "~0.1.1",
     "glob": "~7.1.1",
-    "gulp": "~3.9.1",
+    "gulp": "~4.0.2",
     "gulp-bump": "^2.7.0",
     "gulp-changed": "~2.0.0",
     "gulp-cssnano": "~2.1.2",
